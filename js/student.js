@@ -39,7 +39,7 @@ const levelName = (id) => levels.find((l) => l.id === id)?.name || t('noLevel');
 function route() {
   if (!profile) return renderAuth('login');
   const st = accessState(profile);
-  if (st === 'coach') { location.href = 'coach.html'; return; }
+  if (st === 'coach') return renderCoachNotice();
   if (st !== 'active') return renderStatus(st);
   if (!touched) { touched = true; sb.rpc('touch_activity'); }
   const v = location.hash.slice(1);
@@ -118,6 +118,19 @@ function renderAuth(mode) {
         h('a', { href: '#', onclick: (e) => { e.preventDefault(); renderAuth(mode === 'login' ? 'signup' : 'login'); } },
           mode === 'login' ? t('noAccount') : t('haveAccount'))),
       h('p', { class: 'small muted', style: 'text-align:center' }, h('a', { href: 'coach.html' }, t('coachPanel')))));
+}
+
+/* The coach opened the student link: explain instead of redirecting silently */
+function renderCoachNotice() {
+  setView(
+    topbar(),
+    h('div', { class: 'auth' },
+      h('div', { class: 'card stack', style: 'text-align:center' },
+        h('div', { style: 'font-size:2.6rem' }, '🧑‍🏫'),
+        h('h2', {}, t('coachLoggedIn')),
+        h('p', { class: 'muted' }, t('coachLoggedInText')),
+        h('a', { class: 'btn primary block', href: 'coach.html' }, t('coachPanel')),
+        h('button', { class: 'btn block', onclick: () => sb.auth.signOut() }, t('logout')))));
 }
 
 /* ------------------------------------------------------------------ */
