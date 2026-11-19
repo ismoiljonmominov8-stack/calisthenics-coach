@@ -116,8 +116,7 @@ function renderAuth(mode) {
       h('div', { class: 'card stack' }, form),
       h('p', { class: 'small', style: 'text-align:center;margin-top:16px' },
         h('a', { href: '#', onclick: (e) => { e.preventDefault(); renderAuth(mode === 'login' ? 'signup' : 'login'); } },
-          mode === 'login' ? t('noAccount') : t('haveAccount'))),
-      h('p', { class: 'small muted', style: 'text-align:center' }, h('a', { href: 'coach.html' }, t('coachPanel')))));
+          mode === 'login' ? t('noAccount') : t('haveAccount')))));
 }
 
 /* The coach opened the student link: explain instead of redirecting silently */
