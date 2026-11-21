@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>try{var t=localStorage.getItem('cc-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<style>:root{color-scheme:light}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.backlink{align-self:flex-start;font-size:14px;color:var(--ink);text-decoration:none;border:1px solid var(--rule);border-radius:999px;padding:4px 12px;background:var(--plate)}
+.backlink:focus-visible{outline:2px solid var(--ochre);outline-offset:2px}</style>
+<title>Push-up Anatomiyasi</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single column of numbered anatomical plates (atlas "lavha"), each = figure + sliders + verdict + coach note */
+:root{
+  --paper:#e9dfc8; --plate:#f5eedd; --ink:#2a2016; --ink-soft:#6a5944; --rule:#cbbb98;
+  --bone:#f4ead3; --bone-line:#3a2b1c; --rust:#a3402b; --rust-wash:rgba(163,64,43,.15);
+  --verd:#357061; --verd-wash:rgba(53,112,97,.16); --ochre:#9c6b1c; --ochre-wash:rgba(156,107,28,.15);
+  --hatch:#b6a47f;
+  --f-display:"IM Fell English", Georgia, "Times New Roman", serif;
+  --f-body:"Alegreya Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#1b1610; --plate:#262017; --ink:#efe4cc; --ink-soft:#b2a183; --rule:#463a2a;
+  --bone:#e8dcc1; --bone-line:#120d08; --rust:#de7a5e; --rust-wash:rgba(222,122,94,.17);
+  --verd:#6fb9a1; --verd-wash:rgba(111,185,161,.15); --ochre:#d9a54c; --ochre-wash:rgba(217,165,76,.15);
+  --hatch:#5a4c38; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --paper:#1b1610; --plate:#262017; --ink:#efe4cc; --ink-soft:#b2a183; --rule:#463a2a;
+  --bone:#e8dcc1; --bone-line:#120d08; --rust:#de7a5e; --rust-wash:rgba(222,122,94,.17);
+  --verd:#6fb9a1; --verd-wash:rgba(111,185,161,.15); --ochre:#d9a54c; --ochre-wash:rgba(217,165,76,.15);
+  --hatch:#5a4c38; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55}
+.wrap{max-width:780px;margin:0 auto;padding-block:28px 56px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));
+  display:flex;flex-direction:column;gap:28px}
+header{display:flex;flex-direction:column;gap:10px;padding-block:8px 4px;border-bottom:1px solid var(--rule)}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ochre)}
+h1{font-family:var(--f-display);font-weight:400;font-size:clamp(2.3rem,7vw,3.4rem);line-height:1.02;margin:0;text-wrap:balance}
+h1 em{font-style:italic;color:var(--ink-soft)}
+.lead{margin:0;max-width:62ch;color:var(--ink-soft)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--ink-soft);padding-block:6px 14px}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.sw{width:14px;height:14px;border-radius:3px;border:1px solid var(--bone-line);display:inline-block}
+.toc{display:flex;flex-wrap:wrap;gap:6px}
+.toc a{font-size:13px;color:var(--ink);text-decoration:none;border:1px solid var(--rule);border-radius:999px;padding:3px 11px;background:var(--plate)}
+.toc a:hover,.toc a:focus-visible{border-color:var(--ink)}
+
+.plate{background:var(--plate);border:1px solid var(--rule);border-radius:4px;padding:22px 20px 20px;display:flex;flex-direction:column;gap:14px;scroll-margin-top:16px}
+.plate-head{display:flex;flex-direction:column;gap:6px}
+.num{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ochre)}
+h2{font-family:var(--f-display);font-weight:400;font-size:1.65rem;line-height:1.15;margin:0;text-wrap:balance}
+.chain{margin:0;color:var(--verd);font-size:15.5px}
+.fig{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding-block:6px;overflow:hidden}
+.fig svg{display:block;width:100%;height:auto}
+.ctls{display:flex;flex-direction:column;gap:12px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:center}
+.ctl label{font-size:15px;color:var(--ink-soft)}
+.ctl output{font-family:var(--f-mono);font-size:13.5px;font-variant-numeric:tabular-nums;text-align:right;color:var(--ink)}
+.ctl input{grid-column:1 / -1;width:100%;accent-color:var(--ochre);margin:2px 0 0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chips .cap{font-size:15px;color:var(--ink-soft);margin-right:4px}
+.chip{font:inherit;font-size:14px;color:var(--ink);background:transparent;border:1px solid var(--rule);border-radius:999px;padding:4px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--plate);border-color:var(--ink)}
+.chip:focus-visible,.play:focus-visible,input:focus-visible{outline:2px solid var(--ochre);outline-offset:2px}
+.play{font:inherit;font-size:14.5px;font-weight:500;align-self:flex-start;background:var(--ink);color:var(--plate);border:0;border-radius:999px;padding:7px 16px;cursor:pointer}
+.verdict{border-radius:4px;padding:12px 14px;font-size:15.5px;display:flex;flex-direction:column;gap:6px}
+.verdict .tag{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:500}
+.verdict p{margin:0}
+.verdict ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.v-ok{background:var(--verd-wash)} .v-ok .tag{color:var(--verd)}
+.v-warn{background:var(--ochre-wash)} .v-warn .tag{color:var(--ochre)}
+.v-bad{background:var(--rust-wash)} .v-bad .tag{color:var(--rust)}
+.reads{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 18px;margin:0}
+.reads div{display:flex;flex-direction:column;gap:1px;min-width:0}
+.reads dt{font-size:13px;color:var(--ink-soft)}
+.reads dd{margin:0;font-family:var(--f-mono);font-size:15px;font-variant-numeric:tabular-nums}
+.coach{margin:0;font-size:15px;border-top:1px dashed var(--rule);padding-top:12px;color:var(--ink)}
+.coach b{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ochre);font-weight:500;display:block;margin-bottom:3px}
+.bars{display:flex;flex-direction:column;gap:7px}
+.bar{display:grid;grid-template-columns:96px minmax(0,1fr) 104px;gap:10px;align-items:center;font-size:14px}
+.bar .track{height:12px;background:var(--paper);border-radius:2px;overflow:hidden}
+.bar .fill{height:100%;background:var(--hatch)}
+.bar.on .fill{background:var(--ochre)}
+.bar.on{font-weight:700}
+.bar .kg{font-family:var(--f-mono);font-size:13px;text-align:right;font-variant-numeric:tabular-nums}
+footer{font-size:14px;color:var(--ink-soft);display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--rule);padding-top:16px}
+footer p{margin:0;max-width:68ch}
+footer a{color:var(--ink)}
+
+/* svg classes */
+.bo{stroke:var(--bone-line);stroke-linecap:round;fill:none}
+.bf{stroke:var(--bone);stroke-linecap:round;fill:none}
+.bfill{fill:var(--bone);stroke:var(--bone-line);stroke-width:2.5}
+.jt{fill:var(--bone);stroke:var(--bone-line);stroke-width:2.5}
+.hl{stroke:var(--hatch);stroke-width:2}
+.gl{stroke:var(--ink);stroke-width:2.5}
+.boxr{fill:var(--plate);stroke:var(--ink);stroke-width:2.5}
+.lbl{fill:var(--ink-soft);font-family:var(--f-mono);font-size:21px}
+.lbl-s{fill:var(--ink-soft);font-family:var(--f-mono);font-size:17px}
+.lbl-b{fill:var(--ink);font-family:var(--f-mono);font-size:22px;font-weight:500}
+.t-ok{fill:var(--verd)} .t-warn{fill:var(--ochre)} .t-bad{fill:var(--rust)}
+.z-ok{fill:var(--verd-wash)} .z-warn{fill:var(--ochre-wash)} .z-bad{fill:var(--rust-wash)}
+.s-ok{stroke:var(--verd)} .s-warn{stroke:var(--ochre)} .s-bad{stroke:var(--rust)}
+.dash{stroke:var(--ink-soft);stroke-width:2;stroke-dasharray:7 6;fill:none}
+.ideal{stroke:var(--verd);stroke-width:3;stroke-dasharray:12 8;fill:none}
+.arm{stroke:var(--rust);stroke-width:6;stroke-linecap:round}
+.force{stroke:var(--ochre);stroke-width:4;fill:none}
+.forcehead{fill:var(--ochre)}
+.socket{fill:var(--bone-line)}
+.rib{stroke:var(--bone-line);stroke-width:2;fill:none}
+.wing{fill:var(--rust-wash);stroke:var(--rust);stroke-width:3}
+@media (max-width:480px){ body{font-size:16px} .plate{padding:18px 14px 16px} .bar{grid-template-columns:82px minmax(0,1fr) 96px} }
+@media (prefers-reduced-motion: reduce){ *{scroll-behavior:auto} }
+
+.musc{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--rule);padding-top:12px}
+.musc h3{margin:0;font-family:var(--f-mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--rust);font-weight:500}
+.mnote{margin:0;font-size:15px}
+.mlist{display:flex;flex-direction:column;gap:6px}
+.mrow{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 92px;gap:10px;align-items:center;font-size:14.5px}
+.mrow .mn{min-width:0;line-height:1.25}
+.mrow .mn i{display:block;font-size:12px;color:var(--ink-soft)}
+.mrow .track{height:10px;background:var(--paper);border-radius:2px;overflow:hidden}
+.mrow .fill{display:block;height:100%;background:var(--rust);transition:width .15s}
+.mrow .lv{font-family:var(--f-mono);font-size:12.5px;text-align:right}
+.mus{fill:var(--rust)}
+@media (max-width:480px){.mrow{grid-template-columns:minmax(0,1fr) 70px;}.mrow .lv{grid-column:2;grid-row:1}.mrow .track{grid-column:1 / -1}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<a class="backlink" href="../#technique">← Ilovaga qaytish</a>
+<header>
+  <div class="eyebrow">Kalistenika · Biomexanika atlasi</div>
+  <h1>Push-up <em>anatomiyasi</em></h1>
+  <p class="lead">Yerdan itarilish (otjimaniye) harakatini skelet modelida koʻring. Qoʻllar polga qadalgan, tana oyoq uchlari atrofida aylanadi, tirsak esa yelka va bilak orasida uch oʻlchamda hisoblanadi, xuddi haqiqiy tanadagidek. Har bir lavhada bitta omilni oʻzgartiring: bilak, tirsak va yelkaga tushadigan yuk hamda ishlayotgan mushaklar (qizil rangda) darhol yangilanadi.</p>
+  <div class="legend">
+    <span><i class="sw" style="background:var(--bone)"></i>suyak</span>
+    <span><i class="sw" style="background:var(--rust);opacity:.55;border-color:var(--rust)"></i>ishlayotgan mushak</span>
+    <span><i class="sw" style="background:var(--verd-wash);border-color:var(--verd)"></i>xavfsiz zona</span>
+    <span><i class="sw" style="background:var(--rust-wash);border-color:var(--rust)"></i>xavf zonasi</span>
+    <span><i class="sw" style="background:var(--ochre);border-color:var(--ochre)"></i>yer reaksiya kuchi</span>
+  </div>
+  <nav class="toc" aria-label="Lavhalar">
+    <a href="#lavha-1">I · Qoʻl holati</a><a href="#lavha-2">II · Tirsak</a><a href="#lavha-3">III · Tana chizigʻi</a><a href="#lavha-4">IV · Kurak</a><a href="#lavha-5">V · Variantlar</a><a href="#lavha-6">VI · Umumiy model</a>
+  </nav>
+</header>
+
+<section class="plate" id="lavha-1">
+  <div class="plate-head"><div class="num">Lavha I · yon tomondan</div>
+    <h2>Qoʻl holati → bilak burchagi → tirsak momenti</h2>
+    <p class="chain">Qoʻllar yelkaga nisbatan qayerda turadi → pastki nuqtada tirsak bilak ustida boʻladimi → tirsak va bilakka tushadigan kuch yelkasi</p></div>
+  <div class="fig"></div><div class="ctls"></div><div class="verdict"></div><dl class="reads"></dl><div class="musc"></div>
+  <p class="coach"><b>Murabbiy uchun</b>Talabani yon tomondan, pastki nuqtada suratga oling va bilak ustidan tik chiziq torting. Tirsak shu chiziqqa yaqin boʻlsa, qoʻllar toʻgʻri joyda (odatda koʻkrakning pastki qismi, soʻrgʻich chizigʻi ostida). Tirsak chiziqdan bosh tomonga chiqsa, qoʻllar juda pastda: bilak ortiqcha bukiladi. Oyoq tomonga chiqsa, qoʻllar juda oldinda: yelka oldi va triceps ortiqcha ishlaydi.</p>
+</section>
+
+<section class="plate" id="lavha-2">
+  <div class="plate-head"><div class="num">Lavha II · orqa tomondan, tepadan</div>
+    <h2>Qoʻllar kengligi va tirsak yoʻnalishi → yelka boʻgʻimi</h2>
+    <p class="chain">Qoʻllar orasi va tirsak yoʻnalishi → pastki nuqtada yelka suyagining gavdaga nisbatan burchagi → koʻkrak, triceps ulushi va yelka boʻgʻimidagi siqilish</p></div>
+  <div class="fig"></div><div class="ctls"></div><div class="verdict"></div><dl class="reads"></dl><div class="musc"></div>
+  <p class="coach"><b>Murabbiy uchun</b>Talabani boshi tomonidan yoki tepadan suratga oling. Pastki nuqtada gavda va qoʻllar strelka (↑) shaklida boʻlishi kerak. “T” shakl koʻrinsa, qoʻllarni koʻkrakning pastki qismiga tushiring va tirsaklarni orqaga, tosga qarab yoʻnaltiring. Old tomondan qaraganda bilak tirsak ostida, tik turishi kerak.</p>
+</section>
+
+<section class="plate" id="lavha-3">
+  <div class="plate-head"><div class="num">Lavha III · yon tomondan</div>
+    <h2>Tana chizigʻi → bel yuklamasi</h2>
+    <p class="chain">Press va dumba mushaklari tarangligi → tos toʻgʻri chiziqdan ogʻadi → bel lordozi kuchayadi yoki yuk oyoqlarga koʻchadi</p></div>
+  <div class="fig"></div><div class="ctls"></div><div class="verdict"></div><dl class="reads"></dl><div class="musc"></div>
+  <p class="coach"><b>Murabbiy uchun</b>Yon tomondan toʻpiq, tos va yelkani bitta chiziq bilan tutashtiring. Tos chiziqdan pastda boʻlsa, plank va dumba siqish mashqlarini qoʻshing. Tos setning oxirida koʻtarila boshlasa, bu koʻpincha charchoq belgisi: setni qisqartiring.</p>
+</section>
+
+<section class="plate" id="lavha-4">
+  <div class="plate-head"><div class="num">Lavha IV · orqadan</div>
+    <h2>Kurak harakati → serratus anterior</h2>
+    <p class="chain">Pastga tushishda kuraklar yaqinlashadi → itarish oxirida qovurgʻa boʻylab oldinga sirpanadi (protraksiya) → serratus anterior kurakni qovurgʻaga bosib turadi; zaif boʻlsa ichki qirrasi koʻtariladi</p></div>
+  <div class="fig"></div><div class="ctls"></div><div class="verdict"></div><dl class="reads"></dl><div class="musc"></div>
+  <p class="coach"><b>Murabbiy uchun</b>Talabani orqa tomonidan, tor futbolkada suratga oling. Pastda kuraklar yaqinlashib, tepada ajralishi kerak. Ichki qirrasi “qanot” boʻlib chiqsa, setni toʻxtating va devordan yoki tizzadan push-up plus bilan serratusni kuchaytiring.</p>
+</section>
+
+<section class="plate" id="lavha-5">
+  <div class="plate-head"><div class="num">Lavha V · yon tomondan</div>
+    <h2>Variant → qoʻllarga tushadigan vazn</h2>
+    <p class="chain">Tana qiyaligi va tayanch nuqtasi → ogʻirlik markazi qoʻllarga yaqinlashadi yoki uzoqlashadi → har bir qoʻlga tushadigan kuch va mushaklar ulushi</p></div>
+  <div class="fig"></div><div class="ctls"></div><div class="verdict"></div><div class="bars" aria-label="Variantlar boʻyicha yuk"></div><div class="musc"></div>
+  <p class="coach"><b>Murabbiy uchun</b>Yengildan ogʻirga: Qoʻl 60 sm → Tizzadan → Qoʻl 30 sm → Oddiy → Oyoq 30 sm → Oyoq 60 sm. Talaba belgilangan takrorlarni toza texnika bilan bajara olgandan keyin keyingi variantga oʻtsin.</p>
+</section>
+
+<section class="plate" id="lavha-6">
+  <div class="plate-head"><div class="num">Lavha VI · umumiy model</div>
+    <h2>Hamma omillar birga</h2>
+    <p class="chain">Variant, qoʻl holati va kengligi, tirsak yoʻnalishi, tos chizigʻi, kurak va tushish chuqurligi bir-biriga taʼsir qiladi. Bitta omil oʻzgarsa, boshqa koʻrsatkichlar ham oʻzgaradi.</p></div>
+  <div class="fig"></div><div class="ctls"></div><div class="verdict"></div><dl class="reads"></dl><div class="musc"></div>
+  <p class="coach"><b>Murabbiy uchun</b>Talabaning videosidan koʻrgan holatni shu yerda takrorlang: avval variantni, keyin qoʻl, tirsak va tos holatini qoʻying. Pastdagi roʻyxat qaysi omilni birinchi tuzatish kerakligini koʻrsatadi. Baholash har doim pastki nuqta boʻyicha qilinadi.</p>
+</section>
+
+<footer>
+  <p><b>Model haqida.</b> 175 sm boʻyli, oʻrtacha tana tuzilishli sportchi. Qoʻllar polda qimirlamaydi, tana oyoq uchlari (yoki tizza) atrofida aylanadi, tirsak yelka va bilak orasida uch oʻlchamda hisoblanadi. Burchak va momentlar yoʻnalishni koʻrsatadi, klinik oʻlchov emas.</p>
+  <p><b>Mushaklar.</b> Faollik darajalari taxminiy. Ular boʻgʻim momentlari va EMG tadqiqotlaridagi tendensiyalardan hisoblangan: tor qoʻl holatida koʻkrak va triceps faolligi oshadi (Cogley va boshq., 2005), push-up plus serratus anteriorni kuchaytiradi (Ludewig va boshq., 2004). Bu oʻlchangan foiz emas, mushaklarning nisbiy ulushini koʻrsatadi.</p>
+  <p><b>Yuk qiymatlari.</b> Ebben W.P. va boshq. (2011) <i>Kinetic analysis of several variations of push-ups</i>, Journal of Strength and Conditioning Research. Push-up davomida oʻlchangan eng yuqori yer reaksiya kuchi, tana vazniga nisbatan foizda. Konferensiya tezisi: <a href="https://ojs.ub.uni-konstanz.de/cpa/article/view/4457" target="_blank" rel="noopener">ISBS 2010</a>.</p>
+</footer>
+</div>
+
+<script>
+(function(){
+const D2R=Math.PI/180, R2D=180/Math.PI;
+const A=0.30, B=0.26, SH=0.19;
+const V3={add:(a,b,k=1)=>({x:a.x+b.x*k,y:a.y+b.y*k,z:a.z+b.z*k}),sub:(a,b)=>({x:a.x-b.x,y:a.y-b.y,z:a.z-b.z}),dot:(a,b)=>a.x*b.x+a.y*b.y+a.z*b.z,len:a=>Math.hypot(a.x,a.y,a.z)};
+V3.norm=a=>{const l=V3.len(a)||1;return {x:a.x/l,y:a.y/l,z:a.z/l};};
+const VARIANTS={
+  hands60:{name:'Qoʻl 60 sm',pct:41,yH:.60,yF:0,knee:false},
+  knee:{name:'Tizzadan',pct:49,yH:0,yF:0,knee:true},
+  hands30:{name:'Qoʻl 30 sm',pct:55,yH:.30,yF:0,knee:false},
+  std:{name:'Oddiy',pct:64,yH:0,yF:0,knee:false},
+  feet30:{name:'Oyoq 30 sm',pct:70,yH:0,yF:.30,knee:false},
+  feet60:{name:'Oyoq 60 sm',pct:74,yH:0,yF:.60,knee:false}
+};
+const CTRL={
+  hx:{label:'Qoʻl holati (yelka boʻgʻimiga nisbatan)',min:-36,max:4,fmt:v=>v<0?`${-v} sm tos tomonda`:v>0?`${v} sm bosh tomonda`:'aynan yelka ostida'},
+  hw:{label:'Qoʻllar orasi',min:10,max:26,fmt:v=>`${(v/10).toFixed(1)} × yelka kengligi`},
+  flare:{label:'Tirsak yoʻnalishi',min:0,max:90,fmt:v=>v<25?`tanaga yopishgan (${v}°)`:v<=55?`orqaga-tashqariga (${v}°)`:`yon tomonga (${v}°)`},
+  sag:{label:'Tos holati',min:-15,max:15,fmt:v=>v>0?`${v} sm osilgan`:v<0?`${-v} sm koʻtarilgan`:'toʻgʻri chiziq'},
+  depth:{label:'Tushish',min:0,max:100,fmt:v=>v==0?'tepada':v==100?'pastki nuqta':`${v}%`},
+  bw:{label:'Tana vazni',min:40,max:110,fmt:v=>`${v} kg`},
+  pos:{label:'Kurak holati',min:-10,max:10,fmt:v=>v<0?`retraksiya ${-v}`:v>0?`protraksiya ${v}`:'neytral'},
+  wing:{label:'Qanotlanish (ichki qirra koʻtarilishi)',min:0,max:100,fmt:v=>`${v}%`}
+};
+const f0=x=>Math.round(x), f1=x=>(Math.round(x*10)/10).toFixed(1);
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+function bisect(fn,lo,hi){let flo=fn(lo);for(let i=0;i<50;i++){const m=(lo+hi)/2,fm=fn(m);if((fm>0)===(flo>0)){lo=m;flo=fm;}else hi=m;}return (lo+hi)/2;}
+
+/* ---------- 3D push-up model ---------- */
+function model(p){
+  const v=VARIANTS[p.variant], yH=v.yH, yF=v.yF;
+  const P=v.knee?{x:0.55,y:0.03}:{x:0.10,y:yF}, L=v.knee?0.97:1.49;
+  const Gof=th=>({x:P.x+L*Math.cos(th),y:P.y+L*Math.sin(th)});
+  const chestY=th=>{const g=Gof(th);return g.y-0.14*Math.sin(th)-0.16*Math.cos(th);};
+  const thB=bisect(th=>chestY(th)-(yH+0.05),-0.6,0.9);
+  const Gb=Gof(thB);
+  const W={x:Gb.x+p.hx/100,y:yH+0.03,z:p.hw*SH};
+  const plusTop=p.plus?0.025:0;
+  const reach=th=>{const g=Gof(th);const G={x:g.x+Math.sin(th)*plusTop,y:g.y-Math.cos(th)*plusTop,z:SH-0.6*plusTop};return V3.len(V3.sub(W,G))-(A+B-0.0008);};
+  const thT=bisect(reach,thB,thB+1.2);
+  const th=thT+(thB-thT)*p.depth;
+  const g=Gof(th), u={x:Math.cos(th),y:Math.sin(th)}, n={x:Math.sin(th),y:-Math.cos(th)};
+  const pa=plusTop*(1-p.depth)*(1-p.depth);
+  const G={x:g.x+n.x*pa,y:g.y+n.y*pa,z:SH-0.6*pa};
+  const gw=V3.sub(W,G), d=Math.min(V3.len(gw),A+B-1e-4), ah=V3.norm(gw);
+  const a=(A*A-B*B+d*d)/(2*d), r=Math.sqrt(Math.max(0,A*A-a*a));
+  const Cc=V3.add(G,ah,a), f=p.flare*D2R;
+  const want={x:-Math.cos(f)*Math.cos(th),y:0.55-Math.cos(f)*Math.sin(th),z:Math.sin(f)};
+  let vp=V3.sub(want,{x:ah.x*V3.dot(want,ah),y:ah.y*V3.dot(want,ah),z:ah.z*V3.dot(want,ah)});
+  if(V3.len(vp)<1e-6) vp={x:0,y:1,z:0};
+  const E=V3.add(Cc,V3.norm(vp),r);
+  const u3={x:u.x,y:u.y,z:0}, h=V3.sub(E,G);
+  const flareM=Math.atan2(h.z,-V3.dot(h,u3))*R2D;
+  const tiltS=Math.atan2(E.x-W.x,E.y-W.y)*R2D;
+  const tiltF=Math.atan2(E.z-W.z,E.y-W.y)*R2D;
+  const e1=V3.sub(G,E), e2=V3.sub(W,E);
+  const elbowAng=Math.acos(clamp(V3.dot(e1,e2)/(V3.len(e1)*V3.len(e2)),-1,1))*R2D;
+  const F=v.pct/100*p.bw*9.81/2;
+  const armEl=Math.hypot(E.x-W.x,E.z-W.z), armSh=Math.hypot(G.x-W.x,G.z-W.z);
+  // legs / trunk points (2D sagittal), body line = toe→hip joint→shoulder joint
+  const sag=p.sag/100;
+  const along=(t,off)=>({x:P.x+u.x*t+n.x*off,y:P.y+u.y*t+n.y*off});
+  const m={v,P,L,th,u,n,g,G,E,W,yH,yF,knee:v.knee,flareM,tiltS,tiltF,wristExt:90+tiltS,elbowAng,F,armEl,armSh,
+    tEl:F*armEl,tSh:F*armSh,chest:Math.max(0,(chestY(th)-yH)*100),bodyDeg:th*R2D,pa,pct:v.pct,vname:v.name,sagcm:p.sag,depth:p.depth,hw:p.hw};
+  if(v.knee){ m.Kn=P; m.H=along(0.47,sag); m.Mid=along(0.72,sag*0.45);
+    m.Ank={x:P.x-0.45*Math.cos(38*D2R),y:P.y+0.45*Math.sin(38*D2R)}; m.Toe={x:m.Ank.x+0.03,y:m.Ank.y+0.15}; m.Heel={x:m.Ank.x-0.06,y:m.Ank.y-0.01}; m.lineA=P; }
+  else { m.Toe=P; m.Ank=along(0.07,-0.075); m.Heel=along(0.02,-0.11); m.Kn=along(0.52,sag*0.5); m.H=along(0.99,sag); m.Mid=along(1.24,sag*0.45); m.lineA=m.Ank; }
+  const h1={x:m.Kn.x-m.H.x,y:m.Kn.y-m.H.y}, h2={x:g.x-m.H.x,y:g.y-m.H.y};
+  m.hipAng=Math.acos(clamp((h1.x*h2.x+h1.y*h2.y)/(Math.hypot(h1.x,h1.y)*Math.hypot(h2.x,h2.y)),-1,1))*R2D;
+  return m;
+}
+
+/* ---------- assessments (always on bottom position) ---------- */
+function stackS(mb){const t=mb.tiltS;
+  if(t>16) return {lvl:'bad',txt:`Pastki nuqtada tirsak bilakdan ${f1(Math.abs(mb.E.x-mb.W.x)*100)} sm bosh tomonda, bilak ${f0(mb.wristExt)}° gacha bukilgan. Qoʻllar juda pastda (tos tomonda). Qoʻllarni yelkaga yaqinroq qoʻying.`};
+  if(t>8) return {lvl:'warn',txt:`Bilak ${f0(mb.wristExt)}°: chegara yaqinida. Qoʻllarni 3–4 sm bosh tomonga suring.`};
+  if(t<-16) return {lvl:'bad',txt:`Pastki nuqtada tirsak bilakdan ${f1(Math.abs(mb.E.x-mb.W.x)*100)} sm oyoq tomonda: qoʻllar juda oldinda. Kuch yelkasi uzun, yelka oldi va triceps ortiqcha ishlaydi, pastdan koʻtarilish qiyinlashadi.`};
+  if(t<-8) return {lvl:'warn',txt:`Tirsak bilakdan biroz oyoq tomonda. Qoʻllarni 3–4 sm tos tomonga tushiring.`};
+  return {lvl:'ok',txt:`Pastki nuqtada tirsak bilak ustida turibdi, bilak ${f0(mb.wristExt)}°: kuch suyaklar orqali toʻgʻri uzatiladi.`};}
+function stackF(mb){const t=mb.tiltF;
+  if(t>36) return {lvl:'bad',txt:`Old tomondan qaraganda tirsak bilakdan ancha tashqarida (${f0(t)}°). Qoʻllar tor yoki tirsaklar yon tomonga ochilgan.`};
+  if(t>26) return {lvl:'warn',txt:`Tirsak bilakdan biroz tashqarida (${f0(t)}°): qoʻllarni biroz kengroq qoʻying yoki tirsaklarni tosga qarab yoʻnaltiring.`};
+  if(t<-18) return {lvl:'bad',txt:`Tirsak bilakdan ichkarida (${f0(-t)}°): qoʻllar juda keng, tirsak va bilakning ichki tomoni zoʻriqadi.`};
+  if(t<-8) return {lvl:'warn',txt:`Tirsak bilakdan biroz ichkarida: qoʻllarni biroz torroq qoʻying.`};
+  return {lvl:'ok',txt:`Old tomondan ham bilak tirsak ostida (${f0(t)}°).`};}
+function flareA(a){
+  if(a<22) return {lvl:'warn',txt:`Pastki nuqtada tirsak gavdaga ${f0(a)}°. Tirsaklar yopishgan: triceps asosiy ishchi boʻladi, tirsakka yuk ortadi. Olmos (diamond) va triceps push-up uchun meʼyor.`};
+  if(a<=55) return {lvl:'ok',txt:`Pastki nuqtada tirsak gavdaga ${f0(a)}°: tavsiya etilgan oraliq. Yuqoridan qaraganda strelka (↑) shakli.`};
+  if(a<=68) return {lvl:'warn',txt:`Pastki nuqtada tirsak gavdaga ${f0(a)}°: tirsaklar keng ochilgan, yelka boʻgʻimining oldi zoʻriqadi.`};
+  return {lvl:'bad',txt:`Pastki nuqtada tirsak gavdaga ${f0(a)}°: “T” shakl. Yelka suyagi boshi akromion ostida siqiladi (impingement xavfi).`};}
+function sagA(s){
+  if(s>7) return {lvl:'bad',txt:`Tos ${s} sm osilgan. Bel lordozi kuchayadi, bel umurtqalariga siqilish ortadi. Press va dumba boʻshashgan.`};
+  if(s>3) return {lvl:'warn',txt:`Tos ${s} sm pastga tushgan. Dumbani siqing, qovurgʻalarni tosga yaqinlashtiring.`};
+  if(s<-5) return {lvl:'warn',txt:`Tos ${-s} sm koʻtarilgan. Yukning bir qismi oyoqlarga koʻchadi, ish yelkaga siljiydi.`};
+  return {lvl:'ok',txt:'Toʻpiq, tos va yelka bitta chiziqda.'};}
+const TAG={ok:'Meʼyor',warn:'Diqqat',bad:'Xavf'}, rank={ok:0,warn:1,bad:2};
+function setVerdict(el,lvl,body){el.className='verdict v-'+lvl; el.innerHTML=`<span class="tag">${TAG[lvl]}</span>${body}`;}
+function setReads(el,rows){el.innerHTML=rows.map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');}
+function combine(items){const bad=items.filter(a=>a.lvl!=='ok').sort((x,y)=>rank[y.lvl]-rank[x.lvl]);
+  const lvl=bad.length?bad[0].lvl:'ok';
+  return {lvl,body:bad.length?(bad.length===1?`<p>${bad[0].txt}</p>`:`<ul>${bad.map(a=>`<li>${a.txt}</li>`).join('')}</ul>`):`<p>${items.map(a=>a.txt).join(' ')}</p>`};}
+
+/* ---------- muscles ---------- */
+const MUSC={
+  pec:['Katta koʻkrak mushagi','pectoralis major'],
+  delt:['Deltasimon mushak, oldingi qismi','deltoideus anterior'],
+  tri:['Yelkaning uch boshli mushagi','triceps brachii'],
+  serr:['Oldingi tishli mushak','serratus anterior'],
+  core:['Qorin mushaklari','rectus abdominis, obliqui'],
+  glute:['Katta dumba mushagi','gluteus maximus'],
+  wrist:['Bilak bukuvchilari','flexores carpi'],
+  rhomb:['Rombsimon va trapetsiya oʻrta qismi','rhomboidei, trapezius'],
+  utrap:['Trapetsiya yuqori qismi','trapezius superior'],
+  ltrap:['Trapetsiya pastki qismi','trapezius inferior'],
+  pmin:['Kichik koʻkrak mushagi','pectoralis minor']
+};
+function level(x){return x<28?'past':x<52?'oʻrta':x<74?'yuqori':'juda yuqori';}
+function muscles(m,mb){
+  const L=m.pct/64, bend=clamp((180-m.elbowAng)/110,0,1), fl=mb.flareM, tS=mb.tiltS, sag=m.sagcm, incl=Math.max(0,-mb.bodyDeg);
+  const c=x=>clamp(x,4,100);
+  return {
+    pec:c(L*(45+35*bend+0.30*(fl-45)+10*(1.6-m.hw))),
+    delt:c(L*(40+28*bend+0.25*(fl-45)+0.6*Math.max(0,-tS-8)+0.9*incl+1.5*Math.max(0,-sag))),
+    tri:c(L*(42+30*bend+0.35*(45-fl)+16*(1.6-m.hw)+0.4*Math.max(0,-tS-8))),
+    serr:c(L*(28+30*(1-bend)+900*m.pa)),
+    core:c(L*(55-3.5*Math.max(0,sag)-1.2*Math.max(0,-sag))),
+    glute:c(L*(32-2.5*Math.max(0,sag)-1.5*Math.max(0,-sag))),
+    wrist:c(L*(22+1.6*Math.max(0,tS))),
+    rhomb:c(L*(14+30*bend))
+  };
+}
+function muscleNotes(m,mb,act,st){
+  const top=Object.entries(act).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k])=>MUSC[k][0].toLowerCase());
+  const notes=[];
+  notes.push(m.depth>0.6?`Pastki qismda koʻkrak mushagi choʻzilgan va eng koʻp kuch talab qilinadi.`:m.depth<0.25?`Tepada tirsak deyarli toʻgʻri: triceps harakatni yakunlaydi, serratus kurakni ushlab turadi.`:`Harakat oʻrtasida yuk koʻkrak, yelka oldi va triceps orasida taqsimlanadi.`);
+  if(mb.flareM>55) notes.push('Tirsaklar keng: koʻkrak va yelka oldi ulushi oshdi, triceps ulushi kamaydi.');
+  else if(mb.flareM<22) notes.push('Tirsaklar yopishgan: triceps ulushi oshdi, koʻkrak ulushi kamaydi.');
+  if(m.hw<1.4) notes.push('Tor qoʻl holati koʻkrak va triceps faolligini oshiradi.');
+  else if(m.hw>2.0) notes.push('Keng qoʻl holatida triceps ulushi kamayadi, yelka boʻgʻimiga yuk ortadi.');
+  if(mb.tiltS<-8) notes.push('Qoʻllar oldinda: yelka oldi (deltasimon) ortiqcha ishlaydi.');
+  if(mb.tiltS>8) notes.push('Qoʻllar pastda: bilak bukuvchilari zoʻriqadi.');
+  if(m.sagcm>3) notes.push('Tos osilgan: qorin va dumba mushaklari oʻz ishini qilmayapti, yuk bel umurtqalariga oʻtdi.');
+  if(m.sagcm<-5) notes.push('Tos koʻtarilgan: yuk yelkaga siljiydi, qorin mushaklari kamroq ishlaydi.');
+  if(Math.max(0,-mb.bodyDeg)>8) notes.push('Oyoqlar baland: koʻkrakning yuqori qismi va yelka oldi koʻproq ishlaydi.');
+  if(m.pct<60) notes.push('Yengil variant: barcha mushaklarga yuk kamaygan.');
+  if(m.pa>0.005) notes.push('Push-up plus: serratus anterior qoʻshimcha ishlayapti.');
+  return `<b>Asosiy ishchi mushaklar:</b> ${top.join(', ')}. ${notes.join(' ')}`;
+}
+function renderMusc(el,act,note){
+  el.innerHTML=`<h3>Ishlayotgan mushaklar</h3><p class="mnote">${note}</p><div class="mlist">${Object.entries(act).sort((a,b)=>b[1]-a[1]).map(([k,v])=>
+    `<div class="mrow"><span class="mn">${MUSC[k][0]}<i>${MUSC[k][1]}</i></span><span class="track"><span class="fill" style="width:${f0(v)}%"></span></span><span class="lv">${level(v)}</span></div>`).join('')}</div>`;
+}
+
+/* ---------- side-view drawing ---------- */
+let UID=0;
+function drawSide(m,cfg,uid,act){
+  const yMax=Math.max(0.74,Math.max(m.yH,m.yF)+0.68), SC=420, Wd=2.0*SC, BASE=yMax*SC+8, Ht=BASE+34;
+  const X=x=>x*SC, Y=y=>BASE-y*SC, P=p=>`${X(p.x).toFixed(1)},${Y(p.y).toFixed(1)}`;
+  const ad=(p,v,k)=>({x:p.x+v.x*k,y:p.y+v.y*k});
+  const pt=(p,a,b)=>({x:p.x+m.u.x*a+m.n.x*b,y:p.y+m.u.y*a+m.n.y*b}); // a along body (+head), b toward floor
+  const lerp=(p,q,t)=>({x:p.x+(q.x-p.x)*t,y:p.y+(q.y-p.y)*t});
+  const bone=(a,b,w)=>`<line class="bo" x1="${X(a.x)}" y1="${Y(a.y)}" x2="${X(b.x)}" y2="${Y(b.y)}" stroke-width="${w+5}"/><line class="bf" x1="${X(a.x)}" y1="${Y(a.y)}" x2="${X(b.x)}" y2="${Y(b.y)}" stroke-width="${w}"/>`;
+  const jt=(p,r=6)=>`<circle class="jt" cx="${X(p.x)}" cy="${Y(p.y)}" r="${r}"/>`;
+  const mus=(a,b,w,v)=>`<line x1="${X(a.x)}" y1="${Y(a.y)}" x2="${X(b.x)}" y2="${Y(b.y)}" stroke="var(--rust)" stroke-width="${w}" stroke-linecap="round" opacity="${(0.1+0.6*v/100).toFixed(2)}"/>`;
+  const musP=(pts,v)=>`<polygon class="mus" points="${pts.map(P).join(' ')}" opacity="${(0.1+0.6*v/100).toFixed(2)}"/>`;
+  const {g,G,E,W,H,Kn,Ank,Toe,Heel}=m;
+  let s=`<svg viewBox="0 0 ${Wd} ${Ht}" role="img" aria-label="Push-up skeleti, yon tomondan"><defs><pattern id="h${uid}" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="12" class="hl"/></pattern></defs>`;
+  s+=`<rect x="0" y="${BASE}" width="${Wd}" height="${Ht-BASE}" fill="url(#h${uid})"/><line class="gl" x1="0" x2="${Wd}" y1="${BASE}" y2="${BASE}"/>`;
+  const box=(x0,x1,h)=>`<rect class="boxr" x="${X(x0)}" y="${Y(h)}" width="${X(x1)-X(x0)}" height="${h*SC}"/><rect x="${X(x0)}" y="${Y(h)}" width="${X(x1)-X(x0)}" height="${h*SC}" fill="url(#h${uid})" opacity=".7"/><text class="lbl-s" x="${(X(x0)+X(x1))/2}" y="${Y(h/2)+6}" text-anchor="middle">${f0(h*100)} sm</text>`;
+  if(m.yF>0) s+=box(m.P.x-0.22,m.P.x+0.10,m.yF);
+  if(m.yH>0) s+=box(W.x-0.16,W.x+0.22,m.yH);
+  if(m.knee) s+=`<ellipse cx="${X(m.P.x)}" cy="${BASE-4}" rx="34" ry="7" fill="var(--hatch)"/>`;
+  if(cfg.zones){
+    const top=m.yH+0.46, y0=m.yH, zw=0.03, zo=0.17;
+    const rect=(x0,x1,cls)=>`<rect class="${cls}" x="${X(x0)}" y="${Y(top)}" width="${X(x1)-X(x0)}" height="${(top-y0)*SC}"/>`;
+    s+=rect(W.x-zo,W.x-zw,'z-bad')+rect(W.x-zw,W.x+zw,'z-ok')+rect(W.x+zw,W.x+zo,'z-bad');
+    s+=`<text class="lbl-s t-bad" x="${X(W.x-zo)}" y="${Y(top)-8}">xavf</text><text class="lbl-s t-ok" x="${X(W.x)}" y="${Y(top)-32}" text-anchor="middle">xavfsiz ↓</text><text class="lbl-s t-bad" x="${X(W.x+zo)}" y="${Y(top)-8}" text-anchor="end">xavf</text>`;
+  }
+  if(cfg.line){
+    const a=m.lineA, b=g, d={x:b.x-a.x,y:b.y-a.y}, L2=d.x*d.x+d.y*d.y, t=((H.x-a.x)*d.x+(H.y-a.y)*d.y)/L2, pr={x:a.x+d.x*t,y:a.y+d.y*t};
+    s+=`<line class="ideal" x1="${X(a.x)}" y1="${Y(a.y)}" x2="${X(b.x)}" y2="${Y(b.y)}"/>`;
+    if(Math.abs(m.sagcm)>=1){const cls=sagA(m.sagcm).lvl;
+      s+=`<line class="arm s-${cls}" x1="${X(pr.x)}" y1="${Y(pr.y)}" x2="${X(H.x)}" y2="${Y(H.y)}"/><text class="lbl-b t-${cls}" x="${X(H.x)}" y="${m.sagcm>0?Y(H.y)+44:Y(H.y)-30}" text-anchor="middle">${Math.abs(m.sagcm)} sm</text>`;}
+  }
+  // legs
+  if(m.knee){ s+=bone(m.Ank,m.Toe,8)+bone(m.Heel,m.Ank,8)+bone(Kn,m.Ank,13); }
+  else { s+=bone(Toe,Ank,8)+bone(Ank,Heel,8)+bone(Ank,Kn,13); }
+  s+=bone(Kn,H,16);
+  // trunk anatomy: spine on the back (−n), sternum toward floor (+n)
+  const sac=pt(H,0.02,-0.05), lum=pt(m.Mid,-0.02,-0.075), c7=pt(g,0.05,-0.07), occ=pt(g,0.16,-0.05);
+  const pc=pt(H,-0.01,0.0);
+  s+=`<ellipse class="bfill" cx="${X(pc.x)}" cy="${Y(pc.y)}" rx="${0.10*SC}" ry="${0.07*SC}" transform="rotate(${(-m.th*R2D).toFixed(1)} ${X(pc.x)} ${Y(pc.y)})"/>`;
+  s+=`<path class="bo" stroke-width="15" d="M${P(sac)} Q${P(lum)} ${P(c7)}"/><path class="bf" stroke-width="10" d="M${P(sac)} Q${P(lum)} ${P(c7)}"/>`;
+  for(let i=1;i<13;i++){const t=i/13, q={x:(1-t)*(1-t)*sac.x+2*(1-t)*t*lum.x+t*t*c7.x,y:(1-t)*(1-t)*sac.y+2*(1-t)*t*lum.y+t*t*c7.y}; s+=`<circle class="jt" cx="${X(q.x)}" cy="${Y(q.y)}" r="4.5"/>`;}
+  s+=bone(c7,occ,8);
+  for(let i=0;i<8;i++){const a=pt(g,0.02-i*0.04,-0.065), b=pt(g,-0.03-i*0.042,0.13+i*0.004), c=pt(g,0.03-i*0.04,0.05);
+    s+=`<path class="bo" stroke-width="9" d="M${P(a)} Q${P(c)} ${P(b)}"/><path class="bf" stroke-width="5" d="M${P(a)} Q${P(c)} ${P(b)}"/>`;}
+  s+=bone(pt(g,0.0,0.12),pt(g,-0.22,0.16),6);
+  // muscles behind the arm
+  if(act){
+    s+=musP([pt(g,-0.06,0.05),pt(g,-0.27,0.11),pt(g,-0.17,-0.03)],act.serr);
+    s+=mus(pt(g,-0.31,0.13),pt(H,0.06,0.08),22,act.core);
+    s+=mus(pt(H,0.02,-0.06),pt(H,-0.13,-0.05),26,act.glute);
+    s+=mus(pt(g,-0.05,-0.075),pt(g,-0.14,-0.075),10,act.rhomb);
+  }
+  const sc1=pt(G,0.01,-0.045), sc2=pt(G,-0.15,-0.065), sc3=pt(G,-0.11,-0.02);
+  s+=`<polygon class="bfill" points="${P(sc1)} ${P(sc2)} ${P(sc3)}"/>`;
+  s+=bone(pt(g,0.01,0.11),G,7);
+  const hc=pt(g,0.26,0.0);
+  s+=`<circle class="bfill" cx="${X(hc.x)}" cy="${Y(hc.y)}" r="${0.095*SC}"/>`;
+  const j1=pt(hc,-0.02,0.07), j2=pt(hc,0.07,0.115), j3=pt(hc,0.095,0.04);
+  s+=`<path class="bfill" d="M${P(j1)} Q${P(j2)} ${P(j3)} Z"/>`;
+  const eye=pt(hc,0.045,0.035); s+=`<circle class="socket" cx="${X(eye.x)}" cy="${Y(eye.y)}" r="${0.018*SC}"/>`;
+  // force line + moment arm
+  if(cfg.force){
+    s+=`<line class="dash" x1="${X(W.x)}" y1="${Y(m.yH)}" x2="${X(W.x)}" y2="${Y(Math.max(E.y,W.y+0.1)+0.06)}"/>`;
+    if(Math.abs(E.x-W.x)>0.005) s+=`<line class="arm" x1="${X(W.x)}" y1="${Y(E.y)}" x2="${X(E.x)}" y2="${Y(E.y)}"/>`;
+    const fx=W.x+0.055, fy0=m.yH, fy1=m.yH+0.06+0.10*m.pct/74;
+    s+=`<line class="force" x1="${X(fx)}" y1="${Y(fy0)}" x2="${X(fx)}" y2="${Y(fy1)+10}"/><polygon class="forcehead" points="${X(fx)-9},${Y(fy1)+12} ${X(fx)+9},${Y(fy1)+12} ${X(fx)},${Y(fy1)-6}"/>`;
+    s+=`<text class="lbl-b" x="${X(fx)}" y="${BASE+27}" text-anchor="middle" style="fill:var(--ochre);paint-order:stroke;stroke:var(--plate);stroke-width:6px">${f0(m.F)} N</text>`;
+  }
+  // arm (near side)
+  const tip={x:W.x+0.10,y:m.yH+0.012};
+  s+=bone(W,tip,7)+bone(G,E,13)+bone(E,W,10);
+  if(act){
+    s+=musP([pt(g,0.0,0.115),pt(g,-0.19,0.15),lerp(G,E,0.38)],act.pec);
+    s+=mus(pt(G,0.015,0.02),lerp(G,E,0.45),22,act.delt);
+    const perp={x:-(E.y-G.y),y:(E.x-G.x)}, pl=Math.hypot(perp.x,perp.y)||1, side=perp.y>0?1:-1, off={x:perp.x/pl*0.022*side,y:perp.y/pl*0.022*side};
+    s+=mus(ad(lerp(G,E,0.15),off,1),ad(lerp(G,E,0.92),off,1),17,act.tri);
+    s+=mus(lerp(E,W,0.12),lerp(E,W,0.85),11,act.wrist);
+  }
+  s+=jt(G,8)+jt(E,7)+jt(W,6)+jt(H,7)+jt(Kn,6);
+  if(cfg.angles){
+    const r=0.075, a1=Math.atan2(E.y-W.y,E.x-W.x);
+    const p0={x:W.x+r,y:W.y}, p1={x:W.x+r*Math.cos(a1),y:W.y+r*Math.sin(a1)};
+    const wa=m.tiltS>16?'bad':m.tiltS>8?'warn':'ok';
+    s+=`<path class="force s-${wa}" stroke-width="3" d="M${P(p0)} A${r*SC} ${r*SC} 0 0 0 ${P(p1)}"/>`;
+    s+=`<text class="lbl-b t-${wa}" x="${X(W.x-0.19)}" y="${Y(W.y+0.02)}" text-anchor="end">bilak ${f0(m.wristExt)}°</text>`;
+    s+=`<text class="lbl" x="${X(Math.min(E.x,W.x)-0.19)}" y="${Y(Math.max(E.y,W.y+0.12))+8}" text-anchor="end">tirsak ${f0(m.elbowAng)}°</text>`;
+  }
+  return s+'</svg>';
+}
+
+/* ---------- controls ---------- */
+function slider(root,key,val,uid){
+  const c=CTRL[key], id=`${key}-${uid}`, d=document.createElement('div'); d.className='ctl';
+  d.innerHTML=`<label for="${id}">${c.label}</label><output for="${id}"></output><input type="range" id="${id}" min="${c.min}" max="${c.max}" step="1" value="${val}">`;
+  root.appendChild(d);
+  const inp=d.querySelector('input'), out=d.querySelector('output'), sync=()=>{out.textContent=c.fmt(+inp.value);};
+  sync(); inp.addEventListener('input',sync); return inp;
+}
+function chips(root,label,opts,val,onPick){
+  const d=document.createElement('div'); d.className='chips'; d.setAttribute('role','group'); d.setAttribute('aria-label',label);
+  d.innerHTML=`<span class="cap">${label}:</span>`+opts.map(([k,t])=>`<button type="button" class="chip" data-k="${k}" aria-pressed="${k===val}">${t}</button>`).join('');
+  root.appendChild(d);
+  d.addEventListener('click',e=>{const b=e.target.closest('.chip'); if(!b) return; d.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',x===b)); onPick(b.dataset.k);});
+}
+function playBtn(root,depthInp){
+  const b=document.createElement('button'); b.type='button'; b.className='play'; b.textContent='▶ Harakatni koʻrsatish';
+  root.appendChild(b); let raf=0,t0=0;
+  const loop=t=>{if(!t0)t0=t; const T=((t-t0)/1000)%2.8; const v=T<1.6?T/1.6:1-(T-1.6)/1.2; depthInp.value=Math.round((0.5-0.5*Math.cos(Math.PI*v))*100); depthInp.dispatchEvent(new Event('input')); raf=requestAnimationFrame(loop);};
+  b.addEventListener('click',()=>{if(raf){cancelAnimationFrame(raf);raf=0;t0=0;b.textContent='▶ Harakatni koʻrsatish';}else{b.textContent='❚❚ Toʻxtatish';raf=requestAnimationFrame(loop);}});
+}
+
+/* ---------- generic plate ---------- */
+function plate(id,cfg){
+  const sec=document.getElementById(id), uid=++UID;
+  const el={fig:sec.querySelector('.fig'),ct:sec.querySelector('.ctls'),ver:sec.querySelector('.verdict'),rd:sec.querySelector('.reads'),mu:sec.querySelector('.musc'),bars:sec.querySelector('.bars')};
+  const st=Object.assign({variant:'std',hx:-22,hw:1.7,flare:45,sag:0,depth:1,bw:70,plus:false},cfg.defaults);
+  const inputs={};
+  if(cfg.chips) chips(el.ct,'Variant',Object.entries(VARIANTS).map(([k,v])=>[k,v.name]),st.variant,k=>{st.variant=k;upd();});
+  if(cfg.plusChip) chips(el.ct,'Push-up plus',[['0','yoʻq'],['1','ha']],st.plus?'1':'0',k=>{st.plus=k==='1';upd();});
+  cfg.controls.forEach(k=>{
+    const val=k==='depth'?Math.round(st.depth*100):k==='hw'?Math.round(st.hw*10):st[k];
+    inputs[k]=slider(el.ct,k,val,uid);
+    inputs[k].addEventListener('input',()=>{const x=+inputs[k].value; st[k]=k==='depth'?x/100:k==='hw'?x/10:x; upd();});
+  });
+  if(cfg.play) playBtn(el.ct,inputs.depth);
+  function upd(){
+    const m=model(st), mb=st.depth===1?m:model(Object.assign({},st,{depth:1}));
+    const act=muscles(m,mb);
+    el.fig.innerHTML=cfg.draw?cfg.draw(m,mb,act,uid):drawSide(m,cfg,uid,act);
+    cfg.report(m,mb,st,el,act);
+    renderMusc(el.mu,act,muscleNotes(m,mb,act,st));
+  }
+  upd();
+}
+
+plate('lavha-1',{controls:['hx','depth'],defaults:{hx:-22},zones:true,force:true,angles:true,
+  report(m,mb,st,el){const a=stackS(mb);
+    setVerdict(el.ver,a.lvl,`<p>${a.txt}</p><p style="font-family:var(--f-mono);font-size:13.5px">Hozir: kuch yelkasi ${f1(m.armEl*100)} sm × ${f0(m.F)} N → tirsakda ${f1(m.tEl)} N·m</p>`);
+    setReads(el.rd,[['Bilak burchagi',`${f0(m.wristExt)}°`],['Tirsak burchagi',`${f0(m.elbowAng)}°`],['Tirsak momenti (1 qoʻl)',`${f1(m.tEl)} N·m`],['Yelka momenti (1 qoʻl)',`${f1(m.tSh)} N·m`]]);}});
+
+plate('lavha-3',{controls:['sag','depth'],defaults:{sag:9,depth:0.55},line:true,
+  report(m,mb,st,el){const a=sagA(st.sag); setVerdict(el.ver,a.lvl,`<p>${a.txt}</p>`);
+    setReads(el.rd,[['Tos ogʻishi',st.sag===0?'0 sm':`${Math.abs(st.sag)} sm ${st.sag>0?'pastga':'tepaga'}`],['Son–gavda burchagi',`${f0(m.hipAng)}°`],['Tana qiyaligi',`${f0(m.bodyDeg)}°`]]);}});
+
+plate('lavha-5',{controls:['bw','depth'],chips:true,defaults:{variant:'knee',depth:0.4},force:true,
+  report(m,mb,st,el){const kg=m.pct/100*st.bw;
+    const next={hands60:'Tizzadan',knee:'Qoʻl 30 sm',hands30:'Oddiy',std:'Oyoq 30 sm',feet30:'Oyoq 60 sm',feet60:null}[st.variant];
+    setVerdict(el.ver,'ok',`<p><b>${m.vname}:</b> tana vaznining ${m.pct}% qoʻllarga tushadi: ${f0(kg)} kg, har bir qoʻlga taxminan ${f0(kg/2)} kg.${next?` Keyingi bosqich: <b>${next}</b>.`:' Bu roʻyxatdagi eng ogʻir variant.'}</p>`);
+    el.bars.innerHTML=Object.entries(VARIANTS).map(([k,v])=>`<div class="bar${k===st.variant?' on':''}"><span>${v.name}</span><span class="track"><span class="fill" style="display:block;width:${v.pct}%"></span></span><span class="kg">${f0(v.pct/100*st.bw)} kg · ${v.pct}%</span></div>`).join('');}});
+
+plate('lavha-6',{controls:['hx','hw','flare','sag','depth','bw'],chips:true,plusChip:true,play:true,defaults:{},force:true,angles:true,line:true,
+  report(m,mb,st,el){const c=combine([stackS(mb),stackF(mb),flareA(mb.flareM),sagA(st.sag)]);
+    setVerdict(el.ver,c.lvl,c.body);
+    setReads(el.rd,[['Bilak burchagi',`${f0(m.wristExt)}°`],['Tirsak burchagi',`${f0(m.elbowAng)}°`],['Tirsak–gavda (pastda)',`${f0(mb.flareM)}°`],['Koʻkrak – tayanch',`${f0(m.chest)} sm`],['Qoʻllarga yuk',`${f0(m.pct/100*st.bw)} kg (${m.pct}%)`],['Tirsak momenti',`${f1(m.tEl)} N·m`],['Yelka momenti',`${f1(m.tSh)} N·m`]]);}});
+
+/* ---------- plate II: dorsal-plane (top) view from the same 3D model ---------- */
+function drawTop(m,mb,act,uid){
+  const SC=420, cx=250, cy=150; // cy = shoulder line
+  const proj=Q=>{const du=(Q.x-m.g.x)*m.u.x+(Q.y-m.g.y)*m.u.y; return {x:cx+Q.z*SC, y:cy-du*SC};};
+  const mir=p=>({x:2*cx-p.x,y:p.y});
+  const G=proj(m.G), E=proj(m.E), W=proj(m.W);
+  const bone=(a,b,w)=>`<line class="bo" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke-width="${w+5}"/><line class="bf" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke-width="${w}"/>`;
+  const mus=(a,b,w,v)=>`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="var(--rust)" stroke-width="${w}" stroke-linecap="round" opacity="${(0.1+0.6*v/100).toFixed(2)}"/>`;
+  const lerp=(p,q,t)=>({x:p.x+(q.x-p.x)*t,y:p.y+(q.y-p.y)*t});
+  const zones=[[0,22,'z-warn'],[22,55,'z-ok'],[55,68,'z-warn'],[68,90,'z-bad']];
+  const sector=(sx,side,a1,a2,R)=>{const d=a=>({x:sx+side*R*Math.sin(a*D2R),y:cy+R*Math.cos(a*D2R)});const p1=d(a1),p2=d(a2);return `M${sx},${cy} L${p1.x},${p1.y} A${R} ${R} 0 0 ${side>0?0:1} ${p2.x},${p2.y} Z`;};
+  let s=`<svg viewBox="0 0 500 430" role="img" aria-label="Push-up, orqa tomondan tepadan koʻrinish">`;
+  [[1,G.x],[-1,2*cx-G.x]].forEach(([side,sx])=>zones.forEach(([a1,a2,c])=>{s+=`<path class="${c}" d="${sector(sx,side,a1,a2,150)}"/>`;}));
+  s+=`<text class="lbl-s t-ok" x="${G.x+62}" y="${cy+168}" text-anchor="middle">xavfsiz</text>`;
+  // torso
+  s+=`<line class="bo" x1="${cx}" y1="${cy-12}" x2="${cx}" y2="${cy+225}" stroke-width="15"/><line class="bf" x1="${cx}" y1="${cy-12}" x2="${cx}" y2="${cy+225}" stroke-width="10"/>`;
+  for(let i=0;i<8;i++){const y=cy+18+i*17, w=58-Math.abs(i-3)*5;
+    [1,-1].forEach(sd=>{s+=`<path class="bo" stroke-width="9" d="M${cx},${y} Q${cx+sd*w},${y-4} ${cx+sd*(w+6)},${y+14}"/><path class="bf" stroke-width="5" d="M${cx},${y} Q${cx+sd*w},${y-4} ${cx+sd*(w+6)},${y+14}"/>`;});}
+  s+=`<ellipse class="bfill" cx="${cx}" cy="${cy+240}" rx="62" ry="28"/><circle class="bfill" cx="${cx}" cy="${cy-62}" r="36"/>`;
+  // arms (both)
+  [[G,E,W],[mir(G),mir(E),mir(W)]].forEach(([g,e,w],i)=>{
+    s+=bone({x:cx,y:cy+2},g,7);
+    // hand (fingers toward head)
+    const rot=(i?-1:1)*12;
+    s+=`<g transform="translate(${w.x},${w.y}) rotate(${rot})"><rect class="bfill" x="-15" y="-30" width="30" height="34" rx="8"/>`;
+    for(let k=0;k<4;k++) s+=`<line class="bo" x1="${-10+k*7}" y1="-30" x2="${-10+k*7}" y2="-52" stroke-width="7"/><line class="bf" x1="${-10+k*7}" y1="-30" x2="${-10+k*7}" y2="-52" stroke-width="3.5"/>`;
+    s+=`</g>`;
+    s+=bone(e,w,9)+bone(g,e,13);
+    if(act){ s+=mus(lerp(g,e,0.05),lerp(g,e,0.5),20,act.delt)+mus(lerp(g,e,0.2),lerp(g,e,0.95),14,act.tri); }
+    s+=`<circle class="jt" cx="${e.x}" cy="${e.y}" r="10"/><circle class="jt" cx="${g.x}" cy="${g.y}" r="9"/><circle class="jt" cx="${w.x}" cy="${w.y}" r="6"/>`;
+  });
+  const a=m.flareM, lvl=flareA(mb.flareM).lvl, R=70, p1={x:G.x,y:cy+R}, p2={x:G.x+R*Math.sin(a*D2R),y:cy+R*Math.cos(a*D2R)};
+  if(a>1) s+=`<path class="force s-${lvl}" stroke-width="3" d="M${p1.x},${p1.y} A${R} ${R} 0 0 0 ${p2.x},${p2.y}"/>`;
+  const lp={x:G.x+(R+34)*Math.sin(a/2*D2R),y:cy+(R+34)*Math.cos(a/2*D2R)};
+  s+=`<text class="lbl-b t-${lvl}" x="${lp.x}" y="${lp.y+8}" text-anchor="middle" style="paint-order:stroke;stroke:var(--plate);stroke-width:6px">${f0(a)}°</text>`;
+  s+=`<text class="lbl-s" x="${cx}" y="${cy-108}" text-anchor="middle">bosh</text><text class="lbl-s" x="${cx}" y="422" text-anchor="middle">oyoq tomoni ↓</text>`;
+  return s+'</svg>';
+}
+plate('lavha-2',{controls:['hw','flare','depth'],defaults:{hw:1.7,flare:80},draw:drawTop,
+  report(m,mb,st,el){const c=combine([flareA(mb.flareM),stackF(mb)]); setVerdict(el.ver,c.lvl,c.body);
+    const shape=mb.flareM<22?'tor “I”':mb.flareM<=55?'strelka ↑':mb.flareM<=68?'keng strelka':'“T”';
+    setReads(el.rd,[['Tirsak–gavda (hozir)',`${f0(m.flareM)}°`],['Tirsak–gavda (pastda)',`${f0(mb.flareM)}°`],['Pastda shakl',shape],['Bilak oldidan (pastda)',`${f0(mb.tiltF)}° ${mb.tiltF>=0?'tashqariga':'ichkariga'}`]]);}});
+
+/* ---------- plate IV: scapula ---------- */
+(function(){
+  const sec=document.getElementById('lavha-4'), fig=sec.querySelector('.fig'), ct=sec.querySelector('.ctls'), ver=sec.querySelector('.verdict'), rd=sec.querySelector('.reads'), mu=sec.querySelector('.musc');
+  const st={phase:'top',pos:-6,wing:40};
+  chips(ct,'Faza',[['top','Tepada'],['bottom','Pastda']],st.phase,k=>{st.phase=k;upd();});
+  const uid=++UID, ip=slider(ct,'pos',st.pos,uid), iw=slider(ct,'wing',st.wing,uid);
+  ip.addEventListener('input',()=>{st.pos=+ip.value;upd();}); iw.addEventListener('input',()=>{st.wing=+iw.value;upd();});
+  const SC=800, cx=230, y0=70;
+  function act(){const top=st.phase==='top', pr=Math.max(0,st.pos), re=Math.max(0,-st.pos), w=st.wing;
+    const c=x=>clamp(x,4,100);
+    return {serr:c((top?38:22)+4.5*pr-0.45*w), rhomb:c((top?18:42)+3.5*re), ltrap:c(20+1.8*pr+(top?6:0)), utrap:c(18+0.4*w+1.5*re), pmin:c(16+2*pr+0.3*w)};}
+  function draw(a){
+    const mx=0.07+st.pos*0.003, lift=st.wing/100*0.025, op=v=>(0.1+0.6*v/100).toFixed(2);
+    let s=`<svg viewBox="0 0 460 500" role="img" aria-label="Kuraklar, orqadan koʻrinish">`;
+    s+=`<ellipse cx="${cx}" cy="185" rx="150" ry="150" fill="var(--paper)" stroke="var(--rule)" stroke-width="2"/>`;
+    for(let i=0;i<9;i++){const y=70+i*26, w=125-Math.abs(i-3.5)*9;
+      s+=`<path class="rib" d="M${cx+8},${y} Q${cx+w*0.7},${y-6} ${cx+w},${y+22}"/><path class="rib" d="M${cx-8},${y} Q${cx-w*0.7},${y-6} ${cx-w},${y+22}"/>`;}
+    [1,-1].forEach(side=>{
+      const X=v=>cx+side*v*SC, Y=v=>y0+v*SC;
+      // muscles
+      s+=`<polygon class="mus" opacity="${op(a.serr)}" points="${X(mx+0.105)},${Y(0.06)} ${X(mx+0.02)},${Y(0.15)} ${X(0.175)},${Y(0.22)} ${X(0.185)},${Y(0.08)}"/>`;
+      s+=`<polygon class="mus" opacity="${op(a.rhomb)}" points="${X(0.012)},${Y(-0.01)} ${X(mx)},${Y(0.0)} ${X(mx+0.015)},${Y(0.14)} ${X(0.012)},${Y(0.11)}"/>`;
+      s+=`<polygon class="mus" opacity="${op(a.utrap)}" points="${X(0.012)},${Y(-0.07)} ${X(mx+0.11)},${Y(0.0)} ${X(mx+0.05)},${Y(0.025)} ${X(0.012)},${Y(-0.01)}"/>`;
+      s+=`<polygon class="mus" opacity="${op(a.ltrap)}" points="${X(0.012)},${Y(0.11)} ${X(mx+0.02)},${Y(0.04)} ${X(mx+0.03)},${Y(0.07)} ${X(0.012)},${Y(0.26)}"/>`;
+      const pts=[[mx,0],[mx+0.015,0.14],[mx+0.105,0.025]];
+      if(lift>0.002) s+=`<polygon points="${pts.map(([x,y])=>`${X(x)},${Y(y)+lift*SC*0.55}`).join(' ')}" fill="var(--bone-line)" opacity=".18"/>`;
+      s+=`<polygon class="bfill" points="${pts.map(([x,y])=>`${X(x)},${Y(y)}`).join(' ')}"/>`;
+      s+=`<line class="bo" x1="${X(mx)}" y1="${Y(0.03)}" x2="${X(mx+0.115)}" y2="${Y(0.005)}" stroke-width="9"/><line class="bf" x1="${X(mx)}" y1="${Y(0.03)}" x2="${X(mx+0.115)}" y2="${Y(0.005)}" stroke-width="5"/>`;
+      const lw=st.wing>35?'bad':st.wing>15?'warn':'ok';
+      if(st.wing>15) s+=`<line class="arm s-${lw}" x1="${X(mx)}" y1="${Y(0)}" x2="${X(mx+0.015)}" y2="${Y(0.14)}"/>`;
+      s+=`<circle class="jt" cx="${X(mx+0.105)}" cy="${Y(0.025)}" r="9"/>`;
+    });
+    for(let i=0;i<13;i++) s+=`<rect class="bfill" x="${cx-8}" y="${48+i*22}" width="16" height="16" rx="4"/>`;
+    const iy=430, icx=cx;
+    s+=`<text class="lbl-s" x="20" y="${iy-52}">kesim, tepadan (oʻng kurak)</text>`;
+    s+=`<path d="M${icx-170},${iy+40} Q${icx},${iy-40} ${icx+170},${iy+40}" class="rib" stroke-width="3"/>`;
+    const medX=icx+mx*SC*0.9, latX=medX+0.11*SC, curve=x=>{const t=(x-(icx-170))/340;return (1-t)*(1-t)*(iy+40)+2*(1-t)*t*(iy-40)+t*t*(iy+40);}, lp=lift*SC*1.2;
+    s+=`<path class="bo" stroke-width="12" d="M${medX},${curve(medX)-8-lp} Q${(medX+latX)/2},${curve((medX+latX)/2)-12} ${latX},${curve(latX)-8}"/><path class="bf" stroke-width="7" d="M${medX},${curve(medX)-8-lp} Q${(medX+latX)/2},${curve((medX+latX)/2)-12} ${latX},${curve(latX)-8}"/>`;
+    s+=`<rect class="bfill" x="${icx-9}" y="${curve(icx)-14}" width="18" height="26" rx="4"/>`;
+    if(lp>3) s+=`<line class="arm" x1="${medX}" y1="${curve(medX)-6}" x2="${medX}" y2="${curve(medX)-8-lp}"/><text class="lbl-s t-bad" x="${medX-10}" y="${curve(medX)-16-lp}" text-anchor="end">qanot</text>`;
+    s+=`<text class="lbl-s" x="${icx}" y="${curve(icx)+36}" text-anchor="middle">umurtqa</text>`;
+    return s+'</svg>';
+  }
+  function assess(){
+    if(st.wing>35) return {lvl:'bad',txt:`Kurakning ichki qirrasi qovurgʻadan taxminan ${f1(st.wing/100*2.5)} sm koʻtarilgan. Serratus anterior zaif yoki charchagan. Setni toʻxtating; devordan yoki tizzadan push-up plus bilan kuchaytiring.`};
+    let b;
+    if(st.phase==='top'){ b=st.pos>=3?{lvl:'ok',txt:'Tepada kuraklar ajralgan: push-up plus bajarilyapti, serratus ishlayapti.'}:st.pos>=-2?{lvl:'warn',txt:'Itarish oxirigacha yetkazilmayapti. Tepada kuraklarni yana 2–3 sm ajrating (push-up plus).'}:{lvl:'bad',txt:'Tepada kuraklar siqilgan: serratus ishlamaydi, yelka mustahkam holatda qulflanmaydi.'}; }
+    else { b=st.pos<=1?{lvl:'ok',txt:'Pastda kuraklarning yaqinlashishi tabiiy (retraksiya): koʻkrak toʻliq ochiladi.'}:{lvl:'warn',txt:'Pastda ham kuraklar oldinda: koʻkrak ochilmaydi, amplituda qisqaradi, yelkalar oldinga dumaloqlanadi.'}; }
+    if(st.wing>15) return {lvl:b.lvl==='ok'?'warn':b.lvl,txt:b.txt+' Ichki qirra biroz koʻtarilyapti: serratusni kuzating.'};
+    return b;
+  }
+  function note(a){const n=[];
+    n.push(st.phase==='top'?'Tepada serratus anterior kurakni qovurgʻa boʻylab oldinga tortadi.':'Pastga tushishda rombsimon va trapetsiyaning oʻrta qismi kuraklarni nazorat bilan yaqinlashtiradi.');
+    if(st.pos>3) n.push('Protraksiya: serratus va kichik koʻkrak mushagi faolroq.');
+    if(st.pos<-3) n.push('Retraksiya: rombsimon mushaklar faolroq.');
+    if(st.wing>15) n.push('Qanotlanishda serratus yetarli ishlamaydi, oʻrnini trapetsiyaning yuqori qismi va kichik koʻkrak mushagi bosadi.');
+    const top=Object.entries(a).sort((x,y)=>y[1]-x[1]).slice(0,2).map(([k])=>MUSC[k][0].toLowerCase());
+    return `<b>Asosiy ishchi mushaklar:</b> ${top.join(', ')}. ${n.join(' ')}`;}
+  function upd(){const a=act(); fig.innerHTML=draw(a); const r=assess(); setVerdict(ver,r.lvl,`<p>${r.txt}</p>`);
+    setReads(rd,[['Umurtqadan masofa',`${f1((0.07+st.pos*0.003)*100)} sm`],['Qovurgʻadan koʻtarilish',`${f1(st.wing/100*2.5)} sm`],['Faza',st.phase==='top'?'tepada (itarish oxiri)':'pastki nuqta']]);
+    renderMusc(mu,a,note(a));}
+  upd();
+})();
+})();
+</script>
+
+</body>
+</html>

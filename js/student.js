@@ -47,6 +47,7 @@ function route() {
   if (v === 'progress') return renderProgress();
   if (v === 'trainer') return renderTasks('extra');
   if (v === 'settings') return renderSettings();
+  if (v === 'technique') return renderTechnique();
   renderHome();
 }
 window.addEventListener('hashchange', () => profile && route());
@@ -184,7 +185,19 @@ function renderHome() {
       tile('daily', '🔥', t('dailyTasks'), t('dailyTasksSub')),
       tile('progress', '📈', t('progress'), t('progressSub')),
       tile('trainer', '🎯', t('trainerTasks'), t('trainerTasksSub')),
+      tile('technique', '🦴', t('technique'), t('techniqueSub')),
       tile('settings', '⚙️', t('settings'), t('settingsSub'))));
+}
+
+function renderTechnique() {
+  const item = (href, title, sub) => h('a', { class: 'card tile', href, style: 'text-decoration:none;color:inherit' },
+    h('div', { class: 'ic', 'aria-hidden': 'true' }, '🦴'), h('div', {}, h('b', {}, title), h('span', {}, sub)));
+  setView(
+    viewHead(t('technique')),
+    h('p', { class: 'muted small', style: 'margin:0 0 12px' }, t('techniqueIntro')),
+    h('nav', { class: 'tiles' },
+      item('technique/push-up.html', t('pushupAtlas'), t('pushupAtlasSub')),
+      item('technique/pull-up.html', t('pullupAtlas'), t('pullupAtlasSub'))));
 }
 
 function viewHead(title) {
