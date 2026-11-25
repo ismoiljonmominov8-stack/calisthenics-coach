@@ -242,7 +242,7 @@ function pose(p,lean){
     H=add(g,dir(0),0.50); H={x:H.x,y:H.y-hc*0.005};
     const ld=dir(1.6*hc);
     if(v==='adv'){ K=add(H,{x:0.72,y:-0.69},0.45); Ank=add(K,{x:-0.87,y:0.48},0.43); } // thighs angled down toward the chest, heels near the glutes
-    else if(v==='half'){ K=add(H,ld,0.45); Ank=add(K,{x:0,y:-1},0.43); }
+    else if(v==='half'){ K=add(H,ld,0.45); Ank=add(K,{x:-ld.y,y:-ld.x},0.43); } // thighs in line with the body, knees bent 90°, shins pointing up
     else if(v==='straddle'){ K=add(H,ld,0.45*0.75); Ank=add(K,ld,0.43*0.75); }
     else { K=add(H,ld,0.45); Ank=add(K,ld,0.43); }
   }
@@ -352,7 +352,7 @@ function renderMusc(el,act,note){
 let UID=0;
 const op=v=>(0.1+0.6*v/100).toFixed(2);
 function drawSide(m,cfg,act,uid){
-  const SC=400, xMin=-1.2, xMax=0.9, yMax=0.86, Wd=(xMax-xMin)*SC, BASE=yMax*SC+8, Ht=BASE+36;
+  const SC=400, xMin=-1.2, xMax=0.9, yMax=Math.max(0.86,m.Ank.y+0.16,m.G.y+0.3), Wd=(xMax-xMin)*SC, BASE=yMax*SC+8, Ht=BASE+36;
   const X=p=>(p.x-xMin)*SC, Y=p=>BASE-p.y*SC, P=p=>`${X(p).toFixed(1)},${Y(p).toFixed(1)}`;
   const bone=(a,b,w)=>`<line class="bo" x1="${X(a)}" y1="${Y(a)}" x2="${X(b)}" y2="${Y(b)}" stroke-width="${w+5}"/><line class="bf" x1="${X(a)}" y1="${Y(a)}" x2="${X(b)}" y2="${Y(b)}" stroke-width="${w}"/>`;
   const jt=(p,r=6)=>`<circle class="jt" cx="${X(p)}" cy="${Y(p)}" r="${r}"/>`;
