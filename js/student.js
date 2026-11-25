@@ -197,7 +197,8 @@ function renderTechnique() {
     h('p', { class: 'muted small', style: 'margin:0 0 12px' }, t('techniqueIntro')),
     h('nav', { class: 'tiles' },
       item('technique/push-up.html', t('pushupAtlas'), t('pushupAtlasSub')),
-      item('technique/pull-up.html', t('pullupAtlas'), t('pullupAtlasSub'))));
+      item('technique/pull-up.html', t('pullupAtlas'), t('pullupAtlasSub')),
+      item('technique/planche.html', t('plancheAtlas'), t('plancheAtlasSub'))));
 }
 
 function viewHead(title) {
