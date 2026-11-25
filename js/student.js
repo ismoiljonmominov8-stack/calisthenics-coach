@@ -198,7 +198,8 @@ function renderTechnique() {
     h('nav', { class: 'tiles' },
       item('technique/push-up.html', t('pushupAtlas'), t('pushupAtlasSub')),
       item('technique/pull-up.html', t('pullupAtlas'), t('pullupAtlasSub')),
-      item('technique/planche.html', t('plancheAtlas'), t('plancheAtlasSub'))));
+      item('technique/planche.html', t('plancheAtlas'), t('plancheAtlasSub')),
+      item('technique/front-lever.html', t('fleverAtlas'), t('fleverAtlasSub'))));
 }
 
 function viewHead(title) {

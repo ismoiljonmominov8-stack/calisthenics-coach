@@ -38,7 +38,7 @@ Hosted free on GitHub Pages; data lives in Supabase (free tier).
 |---|---|
 | `index.html`, `js/student.js` | Student app |
 | `coach.html`, `js/coach.js` | Coach panel |
-| `technique/push-up.html`, `technique/pull-up.html`, `technique/planche.html` | Interactive technique atlases (skeleton model, working muscles), opened from the student app's *Texnika* tile |
+| `technique/push-up.html`, `technique/pull-up.html`, `technique/planche.html`, `technique/front-lever.html` | Interactive technique atlases (skeleton model, working muscles), opened from the student app's *Texnika* tile |
 | `js/common.js` | Shared helpers, translations (UZ/RU), media upload |
 | `js/config.js` | Supabase URL + publishable key, login settings |
 | `css/style.css` | Styles (light/dark) |
