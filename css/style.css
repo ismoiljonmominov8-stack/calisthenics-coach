@@ -124,12 +124,12 @@ input:focus, select:focus, textarea:focus, .btn:focus-visible { outline: 2px sol
 .tech-svg { width: 100%; height: 100%; display: block; }
 .tech-text { padding: 0 4px 4px; min-width: 0; }
 .tech-text b { font-size: 1rem; }
-.tech-bone-o { stroke: var(--text); stroke-linecap: round; }
-.tech-bone-f { stroke: var(--surface); stroke-linecap: round; }
-.tech-muscle { stroke: var(--accent); stroke-linecap: round; opacity: .55; }
-.tech-head { fill: var(--surface); stroke: var(--text); stroke-width: 14; }
-.tech-face { fill: var(--text); }
-.tech-joint { fill: var(--surface); stroke: var(--text); stroke-width: 9; }
+.tech-svg .af-skin { fill: var(--surface); stroke: var(--text); stroke-width: 16; stroke-linejoin: round; }
+.tech-svg .af-far { fill: var(--surface-2); stroke: var(--text); stroke-width: 12; stroke-linejoin: round; }
+.tech-svg .af-mus { fill: color-mix(in srgb, var(--muted) 22%, var(--surface)); stroke: var(--text); stroke-width: 6; stroke-opacity: .35; }
+.tech-svg .af-hot { fill: var(--accent); }
+.tech-svg .af-detail { stroke: var(--text); stroke-width: 7; stroke-opacity: .45; fill: none; }
+.tech-svg .af-detail-fill { fill: var(--text); }
 .tech-bar { fill: var(--text); }
 .tech-floor { stroke: var(--line); stroke-width: 14; }
 .viewhead { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
