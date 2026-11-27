@@ -190,17 +190,25 @@ function renderHome() {
 }
 
 function renderTechnique() {
-  const item = (href, title, sub) => h('a', { class: 'card tile', href, style: 'text-decoration:none;color:inherit' },
-    h('div', { class: 'ic', 'aria-hidden': 'true' }, '🦴'), h('div', {}, h('b', {}, title), h('span', {}, sub)));
+  const item = (href, key, title, sub) => h('a', { class: 'card tile tech-tile', href },
+    h('div', { class: 'tech-anim' }),
+    h('div', { class: 'tech-text' }, h('b', {}, title), h('span', {}, sub)));
+  const cards = [
+    item('technique/push-up.html', 'pushup', t('pushupAtlas'), t('pushupAtlasSub')),
+    item('technique/pull-up.html', 'pullup', t('pullupAtlas'), t('pullupAtlasSub')),
+    item('technique/planche.html', 'planche', t('plancheAtlas'), t('plancheAtlasSub')),
+    item('technique/front-lever.html', 'frontlever', t('fleverAtlas'), t('fleverAtlasSub')),
+    item('technique/muscle-up.html', 'muscleup', t('muAtlas'), t('muAtlasSub')),
+  ];
   setView(
     viewHead(t('technique')),
     h('p', { class: 'muted small', style: 'margin:0 0 12px' }, t('techniqueIntro')),
-    h('nav', { class: 'tiles' },
-      item('technique/push-up.html', t('pushupAtlas'), t('pushupAtlasSub')),
-      item('technique/pull-up.html', t('pullupAtlas'), t('pullupAtlasSub')),
-      item('technique/planche.html', t('plancheAtlas'), t('plancheAtlasSub')),
-      item('technique/front-lever.html', t('fleverAtlas'), t('fleverAtlasSub')),
-      item('technique/muscle-up.html', t('muAtlas'), t('muAtlasSub'))));
+    h('nav', { class: 'tiles tech-tiles' }, cards));
+  // animations load on demand so the rest of the app stays light
+  const keys = ['pushup', 'pullup', 'planche', 'frontlever', 'muscleup'];
+  import('./technique-anim.js').then(({ exerciseAnim }) => {
+    cards.forEach((c, i) => c.querySelector('.tech-anim').append(exerciseAnim(keys[i])));
+  }).catch(() => {});
 }
 
 function viewHead(title) {

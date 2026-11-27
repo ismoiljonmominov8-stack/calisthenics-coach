@@ -115,6 +115,23 @@ input:focus, select:focus, textarea:focus, .btn:focus-visible { outline: 2px sol
 .tile .ic { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-size: 1.3rem; background: var(--accent-soft); }
 .tile b { font-size: 1.05rem; display: block; }
 .tile span { color: var(--muted); font-size: .85rem; }
+/* Texnika: cards with a looping skeleton animation of each exercise */
+.tech-tiles > .tech-tile:last-child:nth-child(odd) { grid-column: 1 / -1; }
+.tech-tile { text-decoration: none; color: inherit; padding: 10px; gap: 10px; justify-content: flex-start; }
+.tech-tile:hover { border-color: var(--accent); }
+.tech-tile:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tech-anim { height: 124px; border-radius: 12px; background: var(--surface-2); display: grid; place-items: center; overflow: hidden; padding: 6px; }
+.tech-svg { width: 100%; height: 100%; display: block; }
+.tech-text { padding: 0 4px 4px; min-width: 0; }
+.tech-text b { font-size: 1rem; }
+.tech-bone-o { stroke: var(--text); stroke-linecap: round; }
+.tech-bone-f { stroke: var(--surface); stroke-linecap: round; }
+.tech-muscle { stroke: var(--accent); stroke-linecap: round; opacity: .55; }
+.tech-head { fill: var(--surface); stroke: var(--text); stroke-width: 14; }
+.tech-face { fill: var(--text); }
+.tech-joint { fill: var(--surface); stroke: var(--text); stroke-width: 9; }
+.tech-bar { fill: var(--text); }
+.tech-floor { stroke: var(--line); stroke-width: 14; }
 .viewhead { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
 .viewhead h2 { margin: 0; }
 
