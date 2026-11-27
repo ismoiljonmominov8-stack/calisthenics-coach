@@ -178,7 +178,7 @@ footer a{color:var(--ink)}
 <section class="plate" id="lavha-3">
   <div class="plate-head"><div class="num">Lavha III · yon tomondan</div>
     <h2>Ushlash → kaft burilishi → oʻtish</h2>
-    <p class="chain">Oddiy ushlashda kaft turnik ostida → oʻtishda kaft turnik atrofida ~170° aylanishi kerak → false grip bilan bilak boshidanoq turnik ustida, aylanish kam</p></div>
+    <p class="chain">Oddiy ushlashda bilak turnik ostida → oʻtishda u turnikning sportchi tomonidan aylanib ~150° buriladi → false grip bilan bilak boshidanoq turnik ustida, aylanish kam</p></div>
   <div class="fig"></div><div class="ctls"></div><div class="verdict"></div><dl class="reads"></dl><div class="musc"></div>
   <p class="coach"><b>Murabbiy uchun</b>False grip — bilak turnik ustiga bukilgan, kaftning pastki qismi turnikda. Strict muscle-up oʻrganishda u katta yordam beradi, lekin bilak bukuvchilarini va terini tayyorlash kerak. Avval false grip bilan osilishni (10–20 soniya) va false grip pull-upni oʻrgating.</p>
 </section>
@@ -215,59 +215,61 @@ footer a{color:var(--ink)}
 
 <script>
 (function(){
-const D2R=Math.PI/180, R2D=180/Math.PI, A=0.30, B=0.26;
+const D2R=Math.PI/180, R2D=180/Math.PI, A=0.30, B=0.26, BAR_R=0.018;
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 const add=(p,v,k=1)=>({x:p.x+v.x*k,y:p.y+v.y*k}), lerp=(p,q,t)=>({x:p.x+(q.x-p.x)*t,y:p.y+(q.y-p.y)*t});
 const norm=v=>{const l=Math.hypot(v.x,v.y)||1;return {x:v.x/l,y:v.y/l};};
 const sstep=t=>t*t*(3-2*t);
-// Muscle-up, side view. Bar at (0,0); athlete faces +x (bar in front of the chest). t: 0 dead hang → 1 lockout.
+// Muscle-up, side view. Bar centre at (0,0); athlete faces +x.
+// Each key position says WHERE THE BAR SITS ON THE BODY: a = height along the trunk from the shoulder joint
+// (+ up toward the head), b = distance in front of the body line. b ≥ 0.13 keeps the bar on the chest surface,
+// so the trunk can never pass through the bar.
 function keyframes(p){
-  const hp=p.hp/100, lean=p.lean, kip=p.kip||0;
-  return [ // t, shoulder x, shoulder y, torso tilt (deg, + = shoulders ahead of hips), leg angle (deg, + = feet forward)
-    [0.00,-0.04,-0.60,-6, 6],
-    [0.30,-0.16,-0.42-0.004*kip,-15-1.2*kip, 14+3.2*kip],
-    [0.50,-0.16, hp,-12-0.6*kip, 18+1.5*kip],
-    [0.66,-0.10+0.005*lean, 0.18, lean, -4],   // too little chest lean leaves the shoulders behind the bar
-    [0.82, 0.06+0.005*lean, 0.28, lean*0.8, 0],
-    [1.00, 0.06, 0.62, 6, 2]
+  const hp=p.hp/100, lean=p.lean, k=p.kip||0;
+  return [ // t, a, b, torso tilt (deg, + = leaning forward), leg angle (deg, + = feet forward), elbow flare to the side (deg)
+    [0.00, 0.62, 0.03, -6, 6, 35],
+    [0.30, 0.32, 0.17, -15-1.2*k, 14+3.2*k, 55],
+    [0.50, hp,   0.15, -12-0.6*k, 18+1.5*k, 42],      // high pull: bar touches the chest at the chosen height
+    [0.66, Math.min(hp,-0.04)-0.12, 0.135, lean, -4, 22], // transition: chest rolls over the bar, elbows tuck in
+    [0.82,-0.34, 0.13, lean*0.8, 0, 15],              // dip bottom: bar at the belly
+    [1.00,-0.62, 0.12, 6, 2, 10]                      // lockout: bar at the hips, arms straight
   ];}
-function interp(kf,t){
-  let i=0; while(i<kf.length-2&&t>kf[i+1][0]) i++;
-  const a=kf[i], b=kf[i+1], u=sstep(clamp((t-a[0])/(b[0]-a[0]),0,1));
-  return a.map((v,j)=>v+(b[j]-v)*u);
-}
+function interp(kf,t){ let i=0; while(i<kf.length-2&&t>kf[i+1][0]) i++;
+  const a=kf[i], b=kf[i+1], u=sstep(clamp((t-a[0])/(b[0]-a[0]),0,1)); return a.map((v,j)=>v+(b[j]-v)*u); }
+function wristAngle(p,t){ // wrist position around the bar (deg). -90 = hanging below; the wrist rolls over the
+  // athlete's side of the bar (through 180°) to end on top/behind it in support (120° = -240°).
+  const r0=p.grip==='false'?150:-90, r1=p.grip==='false'?120:-240; return r0+(r1-r0)*sstep(clamp((t-0.50)/0.30,0,1)); }
 function model(p){
-  const t=p.depth, kf=keyframes(p), [,gx,gy,tilt,legAng]=interp(kf,t);
-  // wrist: hanging below the bar, rolling over it during the transition (false grip starts on top)
-  const r0=p.grip==='false'?-25:-90, r1=80, roll=r0+(r1-r0)*sstep(clamp((t-0.52)/0.26,0,1));
-  const W={x:0.055*Math.cos(roll*D2R),y:0.055*Math.sin(roll*D2R)};
-  let G={x:gx,y:gy};
-  const R=A+B-0.0006, dGW=Math.hypot(G.x-W.x,G.y-W.y);
-  if(dGW>R){ G={x:W.x+(G.x-W.x)*R/dGW,y:W.y+(G.y-W.y)*R/dGW}; }
-  // elbow: in front/below during the pull, behind during the dip
-  const d=Math.hypot(G.x-W.x,G.y-W.y), aa=(A*A-B*B+d*d)/(2*d), rr=Math.sqrt(Math.max(0,A*A-aa*aa)), ah={x:(W.x-G.x)/d,y:(W.y-G.y)/d}, Cc=add(G,ah,aa);
-  const E1={x:Cc.x-ah.y*rr,y:Cc.y+ah.x*rr}, E2={x:Cc.x+ah.y*rr,y:Cc.y-ah.x*rr};
-  const s=sstep(clamp((t-0.55)/0.22,0,1)), pref=norm({x:0.5*(1-s)-1*s,y:-1*(1-s)+0.15*s});
-  const E=((E1.x-Cc.x)*pref.x+(E1.y-Cc.y)*pref.y)>((E2.x-Cc.x)*pref.x+(E2.y-Cc.y)*pref.y)?E1:E2;
-  const e1={x:G.x-E.x,y:G.y-E.y}, e2={x:W.x-E.x,y:W.y-E.y};
-  const elbowAng=Math.acos(clamp((e1.x*e2.x+e1.y*e2.y)/(Math.hypot(e1.x,e1.y)*Math.hypot(e2.x,e2.y)),-1,1))*R2D;
+  const t=p.depth, kf=keyframes(p), [,a,b,tilt,legAng,flare]=interp(kf,t);
+  const Ae=A*Math.cos(flare*D2R); // upper arm as seen from the side: part of it points out to the side
   const tu={x:Math.sin(tilt*D2R),y:Math.cos(tilt*D2R)}, nf={x:tu.y,y:-tu.x};
-  const H=add(G,tu,-0.50), ld={x:Math.sin(legAng*D2R),y:-Math.cos(legAng*D2R)};
-  const K=add(H,ld,0.45), Ank=add(K,ld,0.43);
-  // explosive pull: shoulders must rise from the high-pull point to the transition point
-  // explosive pull: the lower the high pull, the more the body must float to get the chest over the bar
-  const hi=kf[2], hf=Math.max(0.03,0.12-(hi[2]+0.10));
-  const peak=(1+hf/0.28)*(1-0.045*(p.kip||0)), dh=hf;
+  let G={x:-(tu.x*a+nf.x*b),y:-(tu.y*a+nf.y*b)};
+  const roll=wristAngle(p,t), W={x:0.055*Math.cos(roll*D2R),y:0.055*Math.sin(roll*D2R)};
+  const Rmax=Ae+B-0.0006, dGW=Math.hypot(G.x-W.x,G.y-W.y);
+  if(dGW>Rmax){ const sh={x:(G.x-W.x)*(1-Rmax/dGW),y:(G.y-W.y)*(1-Rmax/dGW)}; G={x:G.x-sh.x,y:G.y-sh.y}; }
+  // elbow: always the solution on the same side of the shoulder→wrist line (continuous path, no flip)
+  const d=Math.hypot(G.x-W.x,G.y-W.y), aa=(Ae*Ae-B*B+d*d)/(2*d), rr=Math.sqrt(Math.max(0,Ae*Ae-aa*aa)), ah={x:(W.x-G.x)/d,y:(W.y-G.y)/d}, Cc=add(G,ah,aa);
+  const E1={x:Cc.x-ah.y*rr,y:Cc.y+ah.x*rr}, E2={x:Cc.x+ah.y*rr,y:Cc.y-ah.x*rr};
+  const cr=E=>(W.x-G.x)*(E.y-G.y)-(W.y-G.y)*(E.x-G.x);
+  const E=cr(E1)<0?E1:E2;
+  const lat=A*Math.sin(flare*D2R), e1={x:G.x-E.x,y:G.y-E.y,z:-lat}, e2={x:W.x-E.x,y:W.y-E.y,z:0};
+  const elbowAng=Math.acos(clamp((e1.x*e2.x+e1.y*e2.y+e1.z*e2.z)/(Math.hypot(e1.x,e1.y,e1.z)*Math.hypot(e2.x,e2.y)),-1,1))*R2D;
+  const H=add(G,tu,-0.50), ld={x:Math.sin(legAng*D2R),y:-Math.cos(legAng*D2R)}, K=add(H,ld,0.45), Ank=add(K,ld,0.43);
+  const hi=kf[2], hf=Math.max(0.03,0.12+(hi[1]+0.10));
+  const peak=(1+hf/0.28)*(1-0.045*k0(p));
   const phase=t<0.08?'hang':t<0.52?'pull':t<0.76?'trans':t<0.93?'dip':'lock';
-  return {p,t,G,E,W,H,K,Ank,tu,nf,tilt,legAng,roll,rollTotal:r1-r0,elbowAng,elbowBehind:E.x<G.x,peak,dh,phase,hpY:hi[2]};
+  // where the bar is on the body right now (for labels)
+  const barA=a, barB=b;
+  return {p,t,flare,G,E,W,H,K,Ank,tu,nf,tilt,legAng,roll,rollTotal:p.grip==='false'?30:150,elbowAng,elbowBehind:E.x<0,peak,phase,barA,barB};
 }
+function k0(p){return p.kip||0;}
 
 
 const f0=x=>Math.round(x), f1=x=>(Math.round(x*10)/10).toFixed(1);
 const PH={hang:'Osilish',pull:'Tortish',trans:'Oʻtish',dip:'Dip',lock:'Qulflash'};
 const CTRL={
   depth:{label:'Harakat',min:0,max:100,fmt:v=>`${v}%`},
-  hp:{label:'Tortish balandligi (yelka turnikka nisbatan)',min:-28,max:2,fmt:v=>v<=-22?`${-v} sm pastda — iyak darajasi`:v<=-13?`${-v} sm pastda — koʻkrak yuqorisi`:v<=-5?`${-v} sm pastda — koʻkrak pasti`:`${Math.abs(v)} sm — bel darajasi`},
+  hp:{label:'Tortish balandligi (turnik tananing qayeriga yetadi)',min:-28,max:12,fmt:v=>v>=6?'iyak darajasi':v>=-4?'koʻkrak yuqorisi':v>=-16?'koʻkrak pasti':'bel darajasi'},
   lean:{label:'Oʻtishda koʻkrak egilishi',min:0,max:60,fmt:v=>`${v}°`},
   kip:{label:'Kipping (oyoq zarbasi)',min:0,max:10,fmt:v=>v===0?'strict (yoʻq)':`${v}/10`},
   bw:{label:'Tana vazni',min:40,max:110,fmt:v=>`${v} kg`}
@@ -282,12 +284,12 @@ function phaseA(m){
     lock:'Qulflash: qoʻllar toʻliq toʻgʻri, kuraklar pastga tushirilgan, tana turnik ustida tik.'}[m.phase];
   return {lvl:'ok',txt:t};}
 function pullA(p){const h=p.hp;
-  if(h<=-22) return {lvl:'bad',txt:'Tortish faqat iyak darajasiga yetadi: oʻtish uchun tana juda koʻp uchishi kerak. Odatda bir qoʻl oldin chiqadi (chicken wing). Avval chest-to-bar pull-upni oʻrgating.'};
-  if(h<=-13) return {lvl:'warn',txt:'Tortish koʻkrakning yuqori qismigacha: oʻtish mumkin, lekin katta portlovchi kuch kerak. Turnikni koʻkrakning pastiga tortishga harakat qiling.'};
+  if(h>=6) return {lvl:'bad',txt:'Tortish faqat iyak darajasiga yetadi: oʻtish uchun tana juda koʻp uchishi kerak. Odatda bir qoʻl oldin chiqadi (chicken wing). Avval chest-to-bar pull-upni oʻrgating.'};
+  if(h>=-4) return {lvl:'warn',txt:'Tortish koʻkrakning yuqori qismigacha: oʻtish mumkin, lekin katta portlovchi kuch kerak. Turnikni koʻkrakning pastiga tortishga harakat qiling.'};
   return {lvl:'ok',txt:'Tortish koʻkrakning pastki qismigacha yoki undan baland: oʻtish uchun yetarli balandlik.'};}
 function gripA(p){
-  if(p.grip==='false') return {lvl:'ok',txt:'False grip: bilak boshidanoq turnik ustida, kaft oʻtishda faqat taxminan 105° aylanadi. Strict muscle-up uchun eng qulay. Bilak bukuvchilari koʻp ishlaydi.'};
-  return {lvl:'warn',txt:'Oddiy ushlash: oʻtishda kaft turnik atrofida taxminan 170° aylanishi kerak. Qoʻl sirpanishi va oʻtish kechikishi mumkin. Kipping muscle-upda ishlaydi, strict uchun false grip tavsiya etiladi.'};}
+  if(p.grip==='false') return {lvl:'ok',txt:'False grip: bilak boshidanoq turnik ustida, kaft oʻtishda faqat taxminan 30° aylanadi. Strict muscle-up uchun eng qulay. Bilak bukuvchilari koʻp ishlaydi.'};
+  return {lvl:'warn',txt:'Oddiy ushlash: oʻtishda kaft turnik atrofida taxminan 150° aylanishi kerak. Qoʻl sirpanishi va oʻtish kechikishi mumkin. Kipping muscle-upda ishlaydi, strict uchun false grip tavsiya etiladi.'};}
 function leanA(p){const l=p.lean;
   if(l<15) return {lvl:'bad',txt:`Koʻkrak faqat ${l}° egilgan: yelkalar turnik ustiga chiqolmaydi va tana turnik ostida qolib ketadi. Koʻkrak va boshni turnik ustidan oldinga chiqaring.`};
   if(l<25) return {lvl:'warn',txt:`Koʻkrak ${l}° egilgan: oʻtish qiyin. Yana biroz oldinga egiling.`};
@@ -382,7 +384,7 @@ function drawSide(m,cfg,act,path){
   const eye=pt(hc,0.0,0.05); s+=`<circle class="socket" cx="${X(eye)}" cy="${Y(eye)}" r="${0.017*SC}"/>`;
   s+=`<polygon class="bfill" points="${P(pt(G,0.01,-0.05))} ${P(pt(G,-0.15,-0.075))} ${P(pt(G,-0.10,-0.025))}"/>`+bone(pt(G,0.0,0.11),G,6);
   // bar
-  s+=`<circle cx="${X({x:0})}" cy="${Y({y:0})}" r="${0.035*SC}" fill="var(--ink)"/>`;
+  s+=`<circle cx="${X({x:0})}" cy="${Y({y:0})}" r="${0.02*SC}" fill="var(--ink)"/>`;
   // arm + muscles
   if(act) s+=musP([pt(G,0.0,0.115),pt(G,-0.19,0.15),lerp(G,E,0.32)],act.pec)+mus(pt(G,0.02,0.03),lerp(G,E,0.42),20,act.adelt)+mus(pt(G,0.0,-0.03),lerp(G,E,0.38),18,act.rdelt);
   s+=bone(G,E,12)+bone(E,W,9);
@@ -390,9 +392,11 @@ function drawSide(m,cfg,act,path){
     const toW={x:W.x-E.x,y:W.y-E.y}; if(o.x*toW.x+o.y*toW.y<0) o={x:-o.x,y:-o.y}; // biceps faces the forearm side
     const oo=(q,k)=>({x:q.x+o.x*k,y:q.y+o.y*k});
     s+=mus(oo(lerp(G,E,0.18),1),oo(lerp(G,E,0.8),1),14,act.bic)+mus(oo(lerp(G,E,0.65),1),lerp(E,W,0.18),12,act.brach)+mus(oo(lerp(G,E,0.15),-1),oo(lerp(G,E,0.9),-1),14,act.tri)+mus(lerp(E,W,0.12),lerp(E,W,0.85),11,act.grip); }
-  // hand wrapped on the bar, rotated with the wrist roll
-  const hr=m.roll*D2R, hx=X({x:0}), hy=Y({y:0});
-  s+=`<path d="M${hx+Math.cos(hr+0.9)*0.045*SC},${hy-Math.sin(hr+0.9)*0.045*SC} A${0.045*SC} ${0.045*SC} 0 0 1 ${hx+Math.cos(hr-1.6)*0.045*SC},${hy-Math.sin(hr-1.6)*0.045*SC}" fill="none" class="bo" stroke-width="14"/><path d="M${hx+Math.cos(hr+0.9)*0.045*SC},${hy-Math.sin(hr+0.9)*0.045*SC} A${0.045*SC} ${0.045*SC} 0 0 1 ${hx+Math.cos(hr-1.6)*0.045*SC},${hy-Math.sin(hr-1.6)*0.045*SC}" fill="none" class="bf" stroke-width="9"/>`;
+  // hand: palm from the wrist to the bar, fingers wrapped around the bar on the side away from the wrist
+  { const rr=0.034, c0=(m.roll+80)*D2R, c1=(m.roll+280)*D2R, cx=X({x:0}), cy=Y({y:0});
+    const pa={x:Math.cos(c0)*rr,y:Math.sin(c0)*rr}, pb={x:Math.cos(c1)*rr,y:Math.sin(c1)*rr}, contact={x:Math.cos(m.roll*D2R)*0.022,y:Math.sin(m.roll*D2R)*0.022};
+    const arc=`M${cx+pa.x*SC},${cy-pa.y*SC} A${rr*SC} ${rr*SC} 0 1 0 ${cx+pb.x*SC},${cy-pb.y*SC}`;
+    s+=bone(W,contact,11)+`<path d="${arc}" fill="none" class="bo" stroke-width="13"/><path d="${arc}" fill="none" class="bf" stroke-width="8"/>`; }
   s+=jt(G,8)+jt(E,7)+jt(W,5)+jt(H,6);
   s+=`<text class="lbl-b" x="12" y="30">${PH[m.phase]}</text><text class="lbl" x="12" y="${Ht-14}">tirsak ${f0(m.elbowAng)}° · ${m.elbowBehind?'turnik orqasida':'turnik oldida'}</text>`;
   return s+'</svg>';
@@ -437,11 +441,11 @@ plate('lavha-1',{controls:['depth','bw'],play:true,defaults:{depth:0.62},
   report(m,st,el){const a=phaseA(m); setVerdict(el.ver,a.lvl,`<p><b>${PH[m.phase]}.</b> ${a.txt}</p>`);
     setReads(el.rd,[['Faza',PH[m.phase]],['Tirsak burchagi',`${f0(m.elbowAng)}°`],['Yelka turnikka nisbatan',`${f0(m.G.y*100)} sm ${m.G.y>=0?'yuqorida':'pastda'}`],['Tirsak',m.elbowBehind?'turnik orqasida':'turnik oldida']]);}});
 
-plate('lavha-2',{controls:['hp','depth','bw'],defaults:{hp:-22,depth:0.5},
+plate('lavha-2',{controls:['hp','depth','bw'],defaults:{hp:10,depth:0.5},
   report(m,st,el){const a=pullA(st);
     setVerdict(el.ver,a.lvl,`<p>${a.txt}</p><p style="font-family:var(--f-mono);font-size:13.5px">Kerakli eng katta kuch ≈ ${f1(m.peak)} × tana vazni (${f0(m.peak*st.bw)} kg).</p>`);
-    const list=[['Iyak (−25 sm)',-25],['Koʻkrak yuqorisi (−15)',-15],['Koʻkrak pasti (−8)',-8],['Bel (0)',0]];
-    const pk=h=>model(Object.assign({},st,{hp:h})).peak, mx=pk(-28);
+    const list=[['Iyak',10],['Koʻkrak yuqorisi',0],['Koʻkrak pasti',-12],['Bel',-26]];
+    const pk=h=>model(Object.assign({},st,{hp:h})).peak, mx=pk(12);
     el.bars.innerHTML=list.map(([n,h])=>`<div class="bar${Math.abs(h-st.hp)<=3?' on':''}"><span>${n}</span><span class="track"><span class="fill" style="display:block;width:${f0(pk(h)/mx*100)}%"></span></span><span class="kg">${f1(pk(h))}× · ${f0(pk(h)*st.bw)} kg</span></div>`).join('');}});
 
 plate('lavha-3',{controls:['depth'],gripChip:true,defaults:{grip:'normal',depth:0.6},
