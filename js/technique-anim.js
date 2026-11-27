@@ -5,13 +5,16 @@ import FRAMES from './technique-frames.js';
 import './anatomy.js';
 
 const NS = 'http://www.w3.org/2000/svg';
-const STILL = { pushup: 20, pullup: 20, planche: 26, frontlever: 26, muscleup: 30 }; // pose shown when motion is reduced
+const STILL = { pushup: 20, pullup: 20, planche: 26, frontlever: 26, muscleup: 30, dips: 20, squats: 20, abs: 18 }; // pose shown when motion is reduced
 const ACT = { // main working muscles, highlighted in the accent colour
   pushup: { pec: 70, tri: 60, adelt: 55, abs: 35 },
   pullup: { lat: 80, bic: 65, fore: 50, trap: 40 },
   planche: { adelt: 85, serr: 55, bic: 45, abs: 45, pec: 45 },
   frontlever: { lat: 85, abs: 65, tri: 40, pdelt: 50, hipf: 40 },
   muscleup: { lat: 65, bic: 50, tri: 55, pec: 50, adelt: 40 },
+  dips: { tri: 75, pec: 60, adelt: 50, trap: 30 },
+  squats: { quad: 75, glute: 65, ham: 30, erect: 25, calf: 20 },
+  abs: { hipf: 75, abs: 65, lat: 40, fore: 45 },
 };
 const live = new Set();
 let raf = 0, last = 0;
@@ -25,9 +28,12 @@ export function exerciseAnim(key) {
   const vb = (top) => (fol ? `${bx * S} ${-top * S} ${bw * S} ${fol.h * S}` : `${bx * S} ${-(by + bh) * S} ${bw * S} ${bh * S}`);
   const svg = document.createElementNS(NS, 'svg');
   svg.setAttribute('viewBox', vb(0)); svg.setAttribute('class', 'tech-svg'); svg.setAttribute('aria-hidden', 'true'); svg.setAttribute('focusable', 'false');
+  // floor line; a pull-up bar seen end-on (circle); parallel bars seen from the side (a rail on posts)
   const scene = data.scene === 'floor'
     ? `<line class="tech-floor" x1="${bx * S}" x2="${(bx + bw) * S}" y1="0" y2="0"/>`
-    : `<circle class="tech-bar" cx="0" cy="0" r="30"/>`;
+    : data.scene === 'pbar'
+      ? `<line class="tech-pbar" x1="-300" x2="420" y1="0" y2="0"/><line class="tech-pbar-post" x1="-230" x2="-230" y1="0" y2="${-by * S + 200}"/><line class="tech-pbar-post" x1="350" x2="350" y1="0" y2="${-by * S + 200}"/>`
+      : `<circle class="tech-bar" cx="0" cy="0" r="30"/>`;
   const anim = {
     svg, data,
     draw(fi) {
@@ -38,7 +44,7 @@ export function exerciseAnim(key) {
       const up = [neck[0] - hip[0], neck[1] - hip[1]], ul = Math.hypot(up[0], up[1]) || 1, u = [up[0] / ul, up[1] / ul];
       const fv = [face[0] - head[0] - u[0] * 40, face[1] - head[1] - u[1] * 40];
       const fig = window.AnatomyFig.side({ s: S, head, sh: pt('sh'), el: pt('el'), wr: pt('wr'), hand: pt('hand'), hip, kn: pt('kn'), an: pt('an'), toe: pt('toe'), up: u, front: fv, act: ACT[key] });
-      svg.innerHTML = (data.scene === 'floor' ? scene : '') + fig + (data.scene === 'bar' ? scene : '');
+      svg.innerHTML = (data.scene === 'bar' ? '' : scene) + fig + (data.scene === 'bar' ? scene : '');
       if (fol) svg.setAttribute('viewBox', vb(-pt('sh')[1] / S + fol.up));
     },
   };

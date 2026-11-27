@@ -132,6 +132,8 @@ input:focus, select:focus, textarea:focus, .btn:focus-visible { outline: 2px sol
 .tech-svg .af-detail-fill { fill: var(--text); }
 .tech-bar { fill: var(--text); }
 .tech-floor { stroke: var(--line); stroke-width: 14; }
+.tech-pbar { stroke: var(--text); stroke-width: 34; stroke-linecap: round; }
+.tech-pbar-post { stroke: var(--line); stroke-width: 22; }
 .viewhead { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
 .viewhead h2 { margin: 0; }
 

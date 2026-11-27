@@ -38,7 +38,7 @@ Hosted free on GitHub Pages; data lives in Supabase (free tier).
 |---|---|
 | `index.html`, `js/student.js` | Student app |
 | `coach.html`, `js/coach.js` | Coach panel |
-| `technique/push-up.html`, `technique/pull-up.html`, `technique/planche.html`, `technique/front-lever.html`, `technique/muscle-up.html` | Interactive technique atlases (skeleton model, working muscles), opened from the student app's *Texnika* tile |
+| `technique/push-up.html`, `technique/pull-up.html`, `technique/planche.html`, `technique/front-lever.html`, `technique/muscle-up.html`, `technique/dips.html`, `technique/squats.html`, `technique/abs.html` | Interactive technique atlases (anatomical model, working muscles), opened from the student app's *Texnika* tile |
 | `js/anatomy.js` | Anatomical figure renderer (body outline + muscles, side and back view); inlined in the technique pages and used by the Texnika cards |
 | `js/technique-anim.js`, `js/technique-frames.js` | Looping skeleton animations on the Texnika cards; poses baked from the same models the technique pages use |
 | `js/common.js` | Shared helpers, translations (UZ/RU), media upload |
