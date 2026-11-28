@@ -185,7 +185,7 @@ footer a{color:var(--ink)}
     <h2>Kick-up → richag → qoʻlga chiqish</h2>
     <p class="chain">Qoʻllar, gavda va orqa oyoq bitta chiziq (T holat) → oldinga ogʻib qoʻllar polga → orqa oyoq siltaydi, oldingi oyoq itaradi → tos yelka ustiga keladi → oyoqlar birlashadi</p></div>
   <div class="fig"></div><div class="ctls"></div><div class="verdict"></div><dl class="reads"></dl><div class="musc"></div>
-  <p class="coach"><b>Murabbiy uchun</b>Eng koʻp xato: qoʻllar polga tegishi bilan yelkalar oldinga ketadi va tirsak bukiladi. Qoʻl, gavda va orqa oyoq bitta chiziq boʻlib aylansin. Kuchni dozalang: avval tovonlar devorga yumshoq tegadigan darajada siltang, keyin devorsiz “yarim kick-up” (oyoqlar vertikalgacha yetmaydi). Har mashgʻulotda 10–15 ta toza kick-up.</p>
+  <p class="coach"><b>Murabbiy uchun</b>Eng koʻp xato: qoʻllar polga tegishi bilan yelkalar oldinga ketadi va tirsak bukiladi. Qoʻl, gavda va orqa oyoq bitta chiziq boʻlib aylansin; tos oldingi oyoq ustidan oldinga oʻtadi, oldingi oyoq tizzani toʻgʻrilab itaradi va bir oz bukilgan holda ortdan ergashadi. Kuchni dozalang: avval tovonlar devorga yumshoq tegadigan darajada siltang, keyin devorsiz “yarim kick-up” (oyoqlar vertikalgacha yetmaydi). Har mashgʻulotda 10–15 ta toza kick-up.</p>
 </section>
 
 <section class="plate" id="lavha-4">
@@ -518,27 +518,32 @@ function line(p){
   return Object.assign(pose((lo+hi)/2),{th,tau,e});
 }
 /* ---------- III · kick-up (s: 0 standing lunge → 1 handstand) ---------- */
-const PSI_L=135, F={x:-0.50,y:0.08};
+// Solved in joint angles with human limits: push-leg hip flexion ≤ ~120°, knees only bend backward.
+// The hips travel forward over the front foot while the arm–trunk–kick-leg line tips; at hand contact the
+// push foot is ~45 cm behind the hips, then it pushes off as the leg straightens and trails into the line.
+const PSI_L=128, HIP_C=add(W,dirDeg(PSI_L+180),ARM+TR), F={x:HIP_C.x-0.46,y:0.08}, H0={x:F.x-0.25,y:F.y+0.82};
+function legJ(H,u,hf,kf){ // body-relative leg: hf = hip flexion (+ toward the chest), kf = knee flexion (− = shank toward the back)
+  const a=ang({x:-u.x,y:-u.y}), fr=frontOf(u), sg=(dirDeg(a+90).x*fr.x+dirDeg(a+90).y*fr.y)>0?1:-1;
+  const td=dirDeg(a+sg*hf), sd=dirDeg(a+sg*(hf+kf)), K=add(H,td,TH), An=add(K,sd,SH); return {H,K,An,toe:add(An,sd,0.08)}; }
+function plantedLeg(H){ const K=ik2(H,F,TH,SH,c=>c.x); return {H,K,An:F,toe:{x:F.x+0.13,y:0.02}}; }
+function jointsOf(H,u,L){ const a=ang({x:-u.x,y:-u.y}), fr=frontOf(u), sg=(dirDeg(a+90).x*fr.x+dirDeg(a+90).y*fr.y)>0?1:-1;
+  const wrap=x=>((x+540)%360)-180, ta=ang(sub(L.K,L.H)), sa=ang(sub(L.An,L.K)); return {hf:wrap(ta-a)*sg, kf:wrap(sa-ta)*sg}; }
+function phaseB(s){ const t=sstep(clamp((s-0.35)/0.45,0,1)), psi=PSI_L+(180-PSI_L)*t, u=dirDeg(psi);
+  const Sh=add(W,{x:-u.x,y:-u.y},ARM), H=add(Sh,{x:-u.x,y:-u.y},TR); return {psi,u,Sh,H}; }
+const LIFT=(()=>{ for(let s=0.35;s<0.8;s+=0.0025){ const q=phaseB(s); if(len(sub(F,q.H))>TH+SH-0.006){ const j=jointsOf(q.H,q.u,plantedLeg(q.H)); return {s,hf:j.hf,kf:j.kf}; } } return {s:0.5,hf:110,kf:-45}; })();
 function kick(s){
-  let psi,H,hand,Wr,L,L2,planted;
-  const front=(Hh,flexK)=>{ // front (push) leg with the foot on the floor
-    const K=ik2(Hh,F,TH,SH,c=>c.x); return {H:Hh,K,An:F,toe:{x:F.x+0.13,y:0.02}}; };
-  if(s<0.35){ const t=sstep(s/0.35); psi=PSI_L*t; const u=dirDeg(psi);
-    H=add(F,{x:-0.10-0.15*t,y:0.86-0.14*t}); const Sh=add(H,u,TR); Wr=add(Sh,u,ARM);
-    const k=clamp((0.30-Wr.y)/0.25,0,1); hand=add(Wr,dirDeg(psi+(111-psi)*k),0.09+0.005*k);
-    L2=front(H); L=legLine(H,dirDeg(psi+180+20*(1-t)),4*(1-t),1); planted=true;
-    return {s,psi,Sh,H,Wr,hand,L,L2,planted:true,com:comOf(Sh,H,Wr,[L,L2])};
+  if(s<0.35){ const t=sstep(s/0.35), psi=PSI_L*t, u=dirDeg(psi);
+    const H={x:H0.x+(HIP_C.x-H0.x)*t, y:H0.y+(HIP_C.y-H0.y)*t-0.05*Math.sin(Math.PI*t)};
+    const Sh=add(H,u,TR), Wr=add(Sh,u,ARM), k=clamp((0.30-Wr.y)/0.25,0,1), hand=add(Wr,dirDeg(psi+(111-psi)*k),0.09+0.005*k);
+    const L=legJ(H,u,-24*(1-t),-6*(1-t)), P=plantedLeg(H);   // kick leg: from 24° behind (lunge) into line with the trunk
+    return {s,psi,Sh,H,Wr,hand,L,L2:P,planted:true,com:comOf(Sh,H,Wr,[L,P])};
   }
-  const t=(s-0.35)/0.45, e=sstep(clamp(t,0,1)); psi=PSI_L+(180-PSI_L)*e; const u=dirDeg(psi);
-  Wr=W; const Sh=add(W,{x:-u.x,y:-u.y},ARM); H=add(Sh,{x:-u.x,y:-u.y},TR);
-  const lead=s<0.8?14*Math.sin(Math.PI*e):0; L=legLine(H,dirDeg(psi+180+lead));
-  // push leg: foot stays down for the first 15% of the swing, then trails and straightens
-  const tf=clamp(t/0.15,0,1); let P;
-  if(t<0.15){ P=front(H); planted=true; }
-  else { const P0=front(add(W,dirDeg(PSI_L+180),ARM+TR)); // geometry at hand contact
-    const a0=ang(sub(P0.K,P0.H)), k0=ang(sub(P0.An,P0.K))-a0, g=sstep(clamp((t-0.15)/0.6,0,1));
-    const a=a0+(psi+180+lead*0.3-a0)*g, kf=k0*(1-g); P=legLine(H,dirDeg(a),kf,1); planted=false; }
-  return {s,psi,Sh,H,Wr,hand:HANDF,L,L2:P,planted,com:comOf(Sh,H,Wr,[L,P])};
+  const {psi,u,Sh,H}=phaseB(s), lead=s<0.8?12*Math.sin(Math.PI*clamp((s-0.35)/0.45,0,1)):0;
+  const L=legJ(H,u,-lead,0);                                      // kick leg leads with slight hip extension
+  let P,planted=false;
+  if(s<LIFT.s){ P=plantedLeg(H); planted=true; }
+  else { const g=sstep(clamp((s-LIFT.s)/(0.78-LIFT.s),0,1)); P=legJ(H,u,LIFT.hf*(1-g),LIFT.kf*(1-g)-22*Math.sin(Math.PI*g)); } // trailing leg bends a little, then joins
+  return {s,psi,Sh,H,Wr:W,hand:HANDF,L,L2:P,planted,com:comOf(Sh,H,W,[L,P])};
 }
 /* ---------- IV · progression stages ---------- */
 const ST={pike:'Quti ustida pike',chest:'Devorga koʻkrak bilan',back:'Devorga orqa bilan (kick-up)',toe:'Devordan oyoqni uzish',free:'Erkin handstand'};
@@ -627,7 +632,7 @@ mount('lavha-2',{th:172,shrug:'yes',bw:70},{controls:['th','bw'],chips:[['shrug'
     renderMusc(el.mu,act('line',m,p),m.e>12?'Banan holatda bel mushaklari yukni oladi, qorin va dumba boʻshashadi.':'Toʻgʻri chiziqda trapetsiya va oldingi tishli mushak yelkani ochiq ushlaydi; qorin va dumba tos holatini saqlaydi.');}});
 // III
 mount('lavha-3',{s:0},{controls:['s'],play:'s',cycle:3.4,
-  model:p=>kick(p.s/100), draw:(m,p)=>scene({SC:200,x0:-1.6,x1:0.95,y0:-0.08,y1:2.25,ground:0,maxH:520,label:'Kick-up',fig:figOf(m,act('kick',m,p)),
+  model:p=>kick(p.s/100), draw:(m,p)=>scene({SC:170,x0:-2.3,x1:0.55,y0:-0.08,y1:2.25,ground:0,maxH:520,label:'Kick-up',fig:figOf(m,act('kick',m,p)),
     over:(X,Y)=>comMark(X,Y,m.com)+`<text class="lbl" x="10" y="24">${CT.s.fmt(p.s).split('· ')[1]}</text>`}),
   report(m,p,el){const s=m.s; let t,lvl='ok';
     if(s<0.3) t='T holat: qoʻllar quloq yonida, gavda va orqa oyoq bitta chiziq boʻlib oldinga ogʻadi. Oldingi tizza bukiladi va itarishga tayyorlanadi.';
