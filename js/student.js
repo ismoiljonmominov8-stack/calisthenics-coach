@@ -202,13 +202,14 @@ function renderTechnique() {
     item('technique/dips.html', 'dips', t('dipsAtlas'), t('dipsAtlasSub')),
     item('technique/squats.html', 'squats', t('squatsAtlas'), t('squatsAtlasSub')),
     item('technique/abs.html', 'abs', t('absAtlas'), t('absAtlasSub')),
+    item('technique/handstand.html', 'handstand', t('hsAtlas'), t('hsAtlasSub')),
   ];
   setView(
     viewHead(t('technique')),
     h('p', { class: 'muted small', style: 'margin:0 0 12px' }, t('techniqueIntro')),
     h('nav', { class: 'tiles tech-tiles' }, cards));
   // animations load on demand so the rest of the app stays light
-  const keys = ['pushup', 'pullup', 'planche', 'frontlever', 'muscleup', 'dips', 'squats', 'abs'];
+  const keys = ['pushup', 'pullup', 'planche', 'frontlever', 'muscleup', 'dips', 'squats', 'abs', 'handstand'];
   import('./technique-anim.js').then(({ exerciseAnim }) => {
     cards.forEach((c, i) => c.querySelector('.tech-anim').append(exerciseAnim(keys[i])));
   }).catch(() => {});

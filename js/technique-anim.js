@@ -5,7 +5,7 @@ import FRAMES from './technique-frames.js';
 import './anatomy.js';
 
 const NS = 'http://www.w3.org/2000/svg';
-const STILL = { pushup: 20, pullup: 20, planche: 26, frontlever: 26, muscleup: 30, dips: 20, squats: 20, abs: 18 }; // pose shown when motion is reduced
+const STILL = { pushup: 20, pullup: 20, planche: 26, frontlever: 26, muscleup: 30, dips: 20, squats: 20, abs: 18, handstand: 31 }; // pose shown when motion is reduced
 const ACT = { // main working muscles, highlighted in the accent colour
   pushup: { pec: 70, tri: 60, adelt: 55, abs: 35 },
   pullup: { lat: 80, bic: 65, fore: 50, trap: 40 },
@@ -15,6 +15,7 @@ const ACT = { // main working muscles, highlighted in the accent colour
   dips: { tri: 75, pec: 60, adelt: 50, trap: 30 },
   squats: { quad: 75, glute: 65, ham: 30, erect: 25, calf: 20 },
   abs: { hipf: 75, abs: 65, lat: 40, fore: 45 },
+  handstand: { adelt: 70, tri: 50, trap: 50, serr: 45, glute: 40, fore: 35 },
 };
 const live = new Set();
 let raf = 0, last = 0;
